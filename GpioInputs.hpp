@@ -13,14 +13,4 @@ public:
     bool isBPressed() const override;
     bool isXPressed() const override;
     Dial getDialPosition() const override;
-private:
-    gpiod::line pinA;
-    gpiod::line pinB;
-    gpiod::line pinX;
-    gpiod::line pinUp;
-    gpiod::line pinDown;
-    gpiod::line pinLeft;
-    gpiod::line pinRight;
-    gpiod::line pinDialClk;
-    gpiod::line pinDialDt;
 }

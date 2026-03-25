@@ -1,20 +1,20 @@
 #include "GpioInputs.hpp"
-#include <gpiod.h>
+#include <gpiod.hpp>
 #include <stdexcept>
 
-GpioInputs::GpioInputs() {
+GpioInputs::GpioInputs() : Inputs() {
     // Initialize GPIO pins
     try {
-        gpiod::chip chip("/dev/gpiochip0");
-        pinA = chip.get_line(17); // GPIO17
-        pinB = chip.get_line(27); // GPIO27
-        pinX = chip.get_line(22); // GPIO22
-        pinUp = chip.get_line(9); // GPIO9
-        pinDown = chip.get_line(11); // GPIO11
-        pinLeft = chip.get_line(8); // GPIO8
-        pinRight = chip.get_line(7); // GPIO7
-        pinDialClk = chip.get_line(23); // GPIO23
-        pinDialDt = chip.get_line(24); // GPIO24
+        gpiod::chip chip("/dev/gpiochip4");
+        auto pinA = chip.get_line(17); // GPIO17
+        auto pinB = chip.get_line(27); // GPIO27
+        auto pinX = chip.get_line(22); // GPIO22
+        auto pinUp = chip.get_line(9); // GPIO9
+        auto pinDown = chip.get_line(11); // GPIO11
+        auto pinLeft = chip.get_line(8); // GPIO8
+        auto pinRight = chip.get_line(7); // GPIO7
+        auto pinDialClk = chip.get_line(23); // GPIO23
+        auto pinDialDt = chip.get_line(24); // GPIO24
 
         pinA.request({"gpio_inputs", gpiod::line_request::DIRECTION_INPUT});
         pinB.request({"gpio_inputs", gpiod::line_request::DIRECTION_INPUT});
@@ -54,9 +54,9 @@ Dial GpioInputs::getDialPosition() const {
     bool clk = pinDialClk.get_value() == 0; // Active low
     bool dt = pinDialDt.get_value() == 0; // Active low
     if (clk && !dt) {
-        return Dial::LEFT;
+        return Dial::UP;
     } else if (!clk && dt) {
-        return Dial::RIGHT;
+        return Dial::DOWN;
     } else {
         return Dial::NEUTRAL;
     }
