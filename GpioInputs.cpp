@@ -5,7 +5,7 @@
 GpioInputs::GpioInputs() : Inputs() {
     // Initialize GPIO pins
     try {
-        gpiod::chip chip("/dev/gpiochip4");
+        ::gpiod::chip chip("/dev/gpiochip4");
         auto pinA = chip.get_line(17); // GPIO17
         auto pinB = chip.get_line(27); // GPIO27
         auto pinX = chip.get_line(22); // GPIO22

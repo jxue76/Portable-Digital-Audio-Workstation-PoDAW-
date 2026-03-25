@@ -13,4 +13,4 @@ public:
     bool isBPressed() const override;
     bool isXPressed() const override;
     Dial getDialPosition() const override;
-}
+};

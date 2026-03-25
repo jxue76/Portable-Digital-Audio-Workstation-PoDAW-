@@ -35,10 +35,10 @@ int main() {
                 std::cout << "X button is pressed" << std::endl;
             }
             Dial dialPosition = gpio.getDialPosition();
-            if (dialPosition == Dial::LEFT) {
-                std::cout << "Dial is Left" << std::endl;
-            } else if (dialPosition == Dial::RIGHT) {
-                std::cout << "Dial is Right" << std::endl;
+            if (dialPosition == Dial::UP) {
+                std::cout << "Dial is Up" << std::endl;
+            } else if (dialPosition == Dial::DOWN) {
+                std::cout << "Dial is Down" << std::endl;
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
