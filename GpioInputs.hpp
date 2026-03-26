@@ -11,7 +11,7 @@
 #define PINB 27
 #define PINX 22
 #define PINDIALCLK 23
-#define PINDIALDT 24
+#define PINDIALDT 25
 #define PINUP 9
 #define PINDOWN 11
 #define PINLEFT 8
