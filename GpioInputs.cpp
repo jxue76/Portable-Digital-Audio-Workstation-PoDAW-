@@ -69,21 +69,12 @@ Dial GpioInputs::getDialPosition() const {
 
     Dial dial = transitionTable[prevState][currState];
 
-    // Debounce: require 2 consecutive reads of the same direction to accept it
-    // This filters out noise/bounceback that causes brief direction reversals
-    if (dial != Dial::NEUTRAL) {
-        if (dial == lastDialResult) {
-            dialConfirmCount++;
-        } else {
-            dialConfirmCount = 1;
-            lastDialResult = dial;
-        }
-        // Only return direction after 2 consistent reads
-        if (dialConfirmCount < 2) {
-            dial = Dial::NEUTRAL;
-        }
-    } else {
-        dialConfirmCount = 0;
+    // Simple debounce: reject a direction if it immediately reverses from the last valid direction
+    // This filters bounceback but allows smooth continuous rotation
+    if (dial != Dial::NEUTRAL && dial != lastValidDirection) {
+        dial = Dial::NEUTRAL;
+    } else if (dial != Dial::NEUTRAL) {
+        lastValidDirection = dial;
     }
 
     dialLastClk = clk;
