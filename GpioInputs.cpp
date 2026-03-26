@@ -42,7 +42,11 @@ GpioInputs::GpioInputs() :
 
                     int prevState = (static_cast<int>(dialLastClk) << 1) | static_cast<int>(dialLastDt);
                     int currState = (static_cast<int>(clk) << 1) | static_cast<int>(dt);
-
+                    if (event.line_offset() == PINDIALCLK) {
+                        std::cout << "CLK event detected. ";
+                    } else {
+                        std::cout << "DT event detected. ";
+                    }
                     std::cout << "Dial event: CLK=" << clk << " DT=" << dt << " PrevState=" << prevState << " CurrState=" << currState << std::endl;
                     std::cout << "Event number: " << count++ << std::endl;
                     if (dialPosition == Dial::NEUTRAL) {
