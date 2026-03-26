@@ -2,16 +2,37 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <stdexcept>
+#include <string>
 
-int main() {
+int main(int argc, char* argv[]) {
     try {
+        int refreshRate = 100; // Default refresh rate in milliseconds
+        int testDuration = 10; // Test duration in seconds
+        if (argc > 1) {
+            try {
+                refreshRate = std::stoi(argv[1]);
+            } catch (const std::exception& e) {
+                std::cerr << "Invalid refresh rate provided. Using default: " << refreshRate << " ms" << std::endl;
+            }
+        }
+        if (argc > 2) {
+            try {
+                testDuration = std::stoi(argv[2]);
+            } catch (const std::exception& e) {
+                std::cerr << "Invalid test duration provided. Using default: " << testDuration << " seconds" << std::endl;
+            }
+        }
+
+
         GpioInputs gpio;
 
         std::cout << "GPIO test started. Press buttons and rotate the dial." << std::endl;
-        std::cout << "Test will run for 10 seconds." << std::endl;
+        std::cout << "Test will run for " << testDuration << " seconds." << std::endl;
+        std::cout << "Refresh rate: " << refreshRate << " ms" << std::endl;
 
         auto start = std::chrono::steady_clock::now();
-        while (std::chrono::steady_clock::now() - start < std::chrono::seconds(10)) {
+        while (std::chrono::steady_clock::now() - start < std::chrono::seconds(testDuration)) {
             // Test GPIO input
             if (gpio.isUpPressed()) {
                 std::cout << "Up button is pressed" << std::endl;
@@ -41,7 +62,7 @@ int main() {
                 std::cout << "Dial is Down" << std::endl;
             }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(refreshRate));
         }
 
         std::cout << "Test completed." << std::endl;
