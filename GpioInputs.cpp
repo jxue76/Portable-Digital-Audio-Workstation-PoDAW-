@@ -14,11 +14,51 @@ GpioInputs::GpioInputs() :
         .add_line_settings(PINA, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
         .add_line_settings(PINB, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
         .add_line_settings(PINX, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
-        .add_line_settings(PINDIALCLK, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
-        .add_line_settings(PINDIALDT, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true)).do_request())
+        .add_line_settings(PINDIALCLK, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true).set_edge_detection(::gpiod::line_settings::edge_detection::BOTH))
+        .add_line_settings(PINDIALDT, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true).set_edge_detection(::gpiod::line_settings::edge_detection::BOTH))
+        .do_request()),
+    dialThread([&] () {
+        // Transition table: [prevState][currState] -> Dial result
+        // States: 0=00, 1=01, 2=10, 3=11
+        static const Dial transitionTable[4][4] = {
+            // prev\curr  0        1        2        3
+            {Dial::NEUTRAL, Dial::UP, Dial::DOWN, Dial::NEUTRAL},  // curr=00
+            {Dial::DOWN,    Dial::NEUTRAL, Dial::NEUTRAL, Dial::UP},     // curr=01
+            {Dial::UP,      Dial::NEUTRAL, Dial::NEUTRAL, Dial::DOWN},   // curr=10
+            {Dial::NEUTRAL, Dial::DOWN, Dial::UP, Dial::NEUTRAL}   // curr=11
+        };
+        while (dialRunning) {
+            gpioLines.event_wait(std::chrono::milliseconds(100));
+            ::gpiod::edge_event_buffer events(16);
+            gpioLines.read_edge_events(events);
+            for (const auto& event : events) {
+                if (event.line_offset() == PINDIALCLK || event.line_offset() == PINDIALDT) {
+                    std::lock_guard<std::mutex> lock(dialMutex);
+                    bool clk = gpioLines.get_value(PINDIALCLK) == ::gpiod::line::value::ACTIVE; // Active low
+                    bool dt = gpioLines.get_value(PINDIALDT) == ::gpiod::line::value::ACTIVE; // Active low
+
+                    int prevState = (static_cast<int>(dialLastClk) << 1) | static_cast<int>(dialLastDt);
+                    int currState = (static_cast<int>(clk) << 1) | static_cast<int>(dt);
+
+                    Dial dial = transitionTable[prevState][currState];
+
+                    dialLastClk = clk;
+                    dialLastDt = dt;
+                }
+            }
+        }
+    }
+)
 {
     if (!gpioLines) {
         throw std::runtime_error("Failed to request GPIO lines");
+    };
+}
+
+GpioInputs::~GpioInputs() {
+    dialRunning = false;
+    if (dialThread.joinable()) {
+        dialThread.join();
     }
 }
 
@@ -51,25 +91,11 @@ bool GpioInputs::isXPressed() const {
     return rtn;
 }
 Dial GpioInputs::getDialPosition() const {
-    bool clk = gpioLines.get_value(PINDIALCLK) == ::gpiod::line::value::ACTIVE; // Active low
-    bool dt = gpioLines.get_value(PINDIALDT) == ::gpiod::line::value::ACTIVE; // Active low
-
-    int prevState = (static_cast<int>(dialLastClk) << 1) | static_cast<int>(dialLastDt);
-    int currState = (static_cast<int>(clk) << 1) | static_cast<int>(dt);
-
-    // Transition table: [prevState][currState] -> Dial result
-    // States: 0=00, 1=01, 2=10, 3=11
-    static const Dial transitionTable[4][4] = {
-        // prev\curr  0        1        2        3
-        {Dial::NEUTRAL, Dial::UP, Dial::DOWN, Dial::NEUTRAL},  // curr=00
-        {Dial::DOWN,    Dial::NEUTRAL, Dial::NEUTRAL, Dial::UP},     // curr=01
-        {Dial::UP,      Dial::NEUTRAL, Dial::NEUTRAL, Dial::DOWN},   // curr=10
-        {Dial::NEUTRAL, Dial::DOWN, Dial::UP, Dial::NEUTRAL}   // curr=11
-    };
-
-    Dial dial = transitionTable[prevState][currState];
-
-    dialLastClk = clk;
-    dialLastDt = dt;
-    return dial;
+    Dial rtn;
+    {
+        std::lock_guard<std::mutex> lock(dialMutex);
+        rtn = dialPosition;
+        dialPosition = Dial::NEUTRAL; // Reset after reading
+    }
+    return rtn;
 }

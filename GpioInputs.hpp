@@ -3,6 +3,9 @@
 #include "Inputs.hpp"
 #include <gpiod.hpp>
 #include <optional>
+#include <stdexcept>
+#include <thread>
+#include <mutex>
 
 #define PINA 17
 #define PINB 27
@@ -17,6 +20,7 @@
 class GpioInputs : public Inputs {
 public:
     GpioInputs();
+    ~GpioInputs();
     bool isUpPressed() const override;
     bool isDownPressed() const override;
     bool isLeftPressed() const override;
@@ -28,6 +32,11 @@ public:
 private:
     gpiod::chip chip;
     mutable gpiod::line_request gpioLines;
+
     mutable bool dialLastClk = false;
     mutable bool dialLastDt = false;
+    mutable Dial dialPosition = Dial::NEUTRAL;
+    thread dialThread;
+    mutable bool dialRunning = true;
+    mutable std::mutex dialMutex;
 };  
