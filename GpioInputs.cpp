@@ -40,7 +40,7 @@ GpioInputs::GpioInputs() :
                     int prevState = (static_cast<int>(dialLastClk) << 1) | static_cast<int>(dialLastDt);
                     int currState = (static_cast<int>(clk) << 1) | static_cast<int>(dt);
 
-                    Dial dial = transitionTable[prevState][currState];
+                    dialPosition = transitionTable[prevState][currState];
 
                     dialLastClk = clk;
                     dialLastDt = dt;
