@@ -29,5 +29,4 @@ public:
 private:
     gpiod::chip chip;
     gpiod::line_request gpioLines;
-    int pins[9] = {PINUP, PINDOWN, PINLEFT, PINRIGHT, PINA, PINB, PINX, PINDIALCLK, PINDIALDT};
 };
