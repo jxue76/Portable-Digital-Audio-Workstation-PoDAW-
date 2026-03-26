@@ -1,6 +1,8 @@
 #include "GpioInputs.hpp"
 #include <gpiod.hpp>
 #include <stdexcept>
+#include <sstream>
+#include <iostream>
 
 GpioInputs::GpioInputs() : 
     Inputs(), 
@@ -40,6 +42,7 @@ GpioInputs::GpioInputs() :
                     int prevState = (static_cast<int>(dialLastClk) << 1) | static_cast<int>(dialLastDt);
                     int currState = (static_cast<int>(clk) << 1) | static_cast<int>(dt);
 
+                    std::cout << "Dial event: CLK=" << clk << " DT=" << dt << " PrevState=" << prevState << " CurrState=" << currState << std::endl;
                     dialPosition = transitionTable[prevState][currState];
 
                     dialLastClk = clk;
