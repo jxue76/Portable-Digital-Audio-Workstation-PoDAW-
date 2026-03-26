@@ -36,7 +36,7 @@ private:
     mutable bool dialLastClk = false;
     mutable bool dialLastDt = false;
     mutable Dial dialPosition = Dial::NEUTRAL;
-    thread dialThread;
+    std::thread dialThread;
     mutable bool dialRunning = true;
     mutable std::mutex dialMutex;
 };  
