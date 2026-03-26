@@ -2,7 +2,7 @@
 #include <gpiod.hpp>
 #include <stdexcept>
 
-GpioInputs::GpioInputs() : Inputs(), chip("/dev/gpiochip4"){
+GpioInputs::GpioInputs() : Inputs(), chip("/dev/gpiochip4") {
     // Initialize GPIO pins
     try {
         ::gpiod::request_builder gpioLineRequest = chip.prepare_request().set_consumer("gpio-inputs");
@@ -16,36 +16,36 @@ GpioInputs::GpioInputs() : Inputs(), chip("/dev/gpiochip4"){
 }
 
 bool GpioInputs::isUpPressed() const {
-    const bool rtn = *gpioLines.get_value(PINUP) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINUP) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 bool GpioInputs::isDownPressed() const {
-    const bool rtn = *gpioLines.get_value(PINDOWN) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINDOWN) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 bool GpioInputs::isLeftPressed() const {
-    const bool rtn = *gpioLines.get_value(PINLEFT) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINLEFT) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 bool GpioInputs::isRightPressed() const {
-    const bool rtn = *gpioLines.get_value(PINRIGHT) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINRIGHT) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 bool GpioInputs::isAPressed() const {
-    const bool rtn = *gpioLines.get_value(PINA) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINA) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 bool GpioInputs::isBPressed() const {
-    const bool rtn = *gpioLines.get_value(PINB) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINB) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 bool GpioInputs::isXPressed() const {
-    const bool rtn = *gpioLines.get_value(PINX) == ::gpiod::line::value::ACTIVE; // Active low
+    bool rtn = gpioLines.get_value(PINX) == ::gpiod::line::value::ACTIVE; // Active low
     return rtn;
 }
 Dial GpioInputs::getDialPosition() const {
-    const bool clk = *gpioLines.get_value(PINDIALCLK) == ::gpiod::line::value::ACTIVE; // Active low
-    const bool dt = *gpioLines.get_value(PINDIALDT) == ::gpiod::line::value::ACTIVE; // Active low
+    bool clk = gpioLines.get_value(PINDIALCLK) == ::gpiod::line::value::ACTIVE; // Active low
+    bool dt = gpioLines.get_value(PINDIALDT) == ::gpiod::line::value::ACTIVE; // Active low
     if (clk && !dt) {
         return Dial::UP;
     } else if (!clk && dt) {
