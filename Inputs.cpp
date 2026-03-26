@@ -1,3 +1,7 @@
+/*
+This file defines default behavior for the Inputs class. This behavior is intended to be overriden by all implementations. The default behavior is to return false for all button presses and NEUTRAL for the dial position.
+*/
+
 #include "Inputs.hpp"
 
 Inputs::Inputs() {};

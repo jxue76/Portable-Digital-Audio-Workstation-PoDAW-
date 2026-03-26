@@ -1,4 +1,6 @@
-//buttons on 17, 27, 22; the rotary encoder on 23, 24; the dpad on 9, 11, 8, 7
+/*
+This file defines the GpioInputs class, which implements the Inputs interface to read button states from GPIO pins.
+*/
 
 #include "Inputs.hpp"
 #include <gpiod.hpp>
@@ -35,8 +37,8 @@ private:
 
     mutable bool dialLastClk = false;
     mutable bool dialLastDt = false;
-    // mutable Dial dialPosition = Dial::NEUTRAL;
-    // std::thread dialThread;
-    // mutable bool dialRunning = true;
-    // mutable std::mutex dialMutex;
+    mutable Dial dialPosition = Dial::NEUTRAL;
+    std::thread dialThread;
+    mutable bool dialRunning = true;
+    mutable std::mutex dialMutex;
 };  

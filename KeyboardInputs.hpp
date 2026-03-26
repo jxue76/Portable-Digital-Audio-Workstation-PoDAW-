@@ -1,4 +1,4 @@
-#include "Inputs.hpp"
+// This file defines the KeyboardInputs class, which implements the Inputs interface to emulate button states from a keyboard device.
 #include <map>
 
 class KeyboardInputs : public Inputs {

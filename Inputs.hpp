@@ -1,10 +1,16 @@
+/*
+This is the top-level interface for reading inputs from the hardware. It defines the Inputs class, which provides virtual methods for checking the state of various buttons and a dial.
+*/
+
+//Defines dial states
 enum class Dial {
     UP,
     DOWN,
     NEUTRAL
 };
-class Inputs {
 
+//Defines all pollable inputs: buttons (up, down, left, right, A, B, X) and a dial (up, down, neutral)
+class Inputs {
 protected:
     Inputs();
 public:

@@ -1,4 +1,7 @@
-// Used for testing keyboard inputs to emulate button presses / dial turns for gui testing on desktop if applicable
+/*
+This file implements the KeyboardInputs class, which implements the Inputs interface to read button states from a keyboard device. It uses the Linux input event system to read key events and updates the state of the buttons accordingly. The class also handles opening the appropriate input device and cleaning up resources when done.
+THIS HAS NOT YET BEEN SUCCESSFULLY TESTED, maybe we re-implement using imgui if necessary
+*/
 #include "KeyboardInputs.hpp"
 #include <linux/input.h>
 #include <fcntl.h>
