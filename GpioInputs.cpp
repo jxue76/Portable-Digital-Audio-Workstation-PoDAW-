@@ -102,6 +102,7 @@ bool GpioInputs::isXPressed() const {
 Dial GpioInputs::getDialPosition() const {
     Dial rtn;
     {
+        std::lock_guard<std::mutex> lock(dialMutex);
         rtn = dialPosition;
         dialPosition = Dial::NEUTRAL; // Reset after reading
     }

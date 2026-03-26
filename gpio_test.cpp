@@ -1,7 +1,7 @@
 /*
 This file contains a simple test program for the GpioInputs class.
 Compiled on Raspberry P Zero 2W with:
-g++ -std=c++17 -o gpio_test GpioInputs.cpp Inputs.cpp gpio_test.cpp -lgpiodcxx
+g++ -std=c++17 -o <executable path/name> GpioInputs.cpp Inputs.cpp gpio_test.cpp -lgpiodcxx
 */
 
 #include "GpioInputs.hpp"
