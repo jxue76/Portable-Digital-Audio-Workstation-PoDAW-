@@ -28,7 +28,7 @@ GpioInputs::GpioInputs() :
             {Dial::NEUTRAL, Dial::DOWN, Dial::UP, Dial::NEUTRAL}   // curr=11
         };
         while (dialRunning) {
-            gpioLines.wait_edge_events(std::chrono::milliseconds(100));
+            gpioLines.wait_edge_events(std::chrono::milliseconds(10));
             ::gpiod::edge_event_buffer events(16);
             gpioLines.read_edge_events(events);
             for (const auto& event : events) {
