@@ -2,16 +2,21 @@
 #include <gpiod.hpp>
 #include <stdexcept>
 
-GpioInputs::GpioInputs() : Inputs(), chip("/dev/gpiochip4") {
-    // Initialize GPIO pins
-    try {
-        ::gpiod::request_builder gpioLineRequest = chip.prepare_request().set_consumer("gpio-inputs");
-        for (int pin : pins) {
-            gpioLineRequest.add_line_settings(pin, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true));
-        }
-        gpioLines = gpioLineRequest.do_request();
-    } catch (const std::exception& e) {
-        throw std::runtime_error("Failed to initialize GPIO inputs: " + std::string(e.what()));
+GpioInputs::GpioInputs() : 
+    Inputs(), 
+    chip("/dev/gpiochip4"),
+    gpioLines(chip.prepare_request().set_consumer("gpio-inputs").add_line_settings(PINUP, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINDOWN, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINLEFT, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINRIGHT, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINA, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINB, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINX, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINDIALCLK, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true))
+        .add_line_settings(PINDIALDT, ::gpiod::line_settings().set_direction(::gpiod::line::direction::INPUT).set_active_low(true)).do_request())
+{
+    if (!gpioLines) {
+        throw std::runtime_error("Failed to request GPIO lines");
     }
 }
 
