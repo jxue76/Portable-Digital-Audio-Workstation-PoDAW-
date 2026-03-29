@@ -13,6 +13,12 @@ int selected_menu = 2; // Default to "Options"
 int current_track = 0;
 int tempo = 180;
 
+const int NUM_TRACKS = 4;
+const int NUM_STEPS = 16;
+bool grid_data[NUM_TRACKS][NUM_STEPS] = {false}; // Stores where notes are placed
+int cursor_track = 0;
+int cursor_step = 0;
+
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
@@ -104,21 +110,54 @@ int main(int, char**) {
             ImGui::EndChild();
         } 
         else if (current_state == SEQUENCER) {
-            // --- SEQUENCER PAGE MOCKUP ---
+            // 1. Handle D-Pad Inputs for the Cursor
+            if (ImGui::IsKeyPressed(ImGuiKey_UpArrow) && cursor_track > 0) cursor_track--;
+            if (ImGui::IsKeyPressed(ImGuiKey_DownArrow) && cursor_track < NUM_TRACKS - 1) cursor_track++;
+            if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow) && cursor_step > 0) cursor_step--;
+            if (ImGui::IsKeyPressed(ImGuiKey_RightArrow) && cursor_step < NUM_STEPS - 1) cursor_step++;
+            
+            // Handle Action Button (Toggle Note)
+            if (ImGui::IsKeyPressed(ImGuiKey_Space) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
+                grid_data[cursor_track][cursor_step] = !grid_data[cursor_track][cursor_step];
+            }
+
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
             ImVec2 p = ImGui::GetCursorScreenPos();
             
-            // Draw Left Track Header (Blue)
+            // 2. Draw Left Track Header (Blue)
             draw_list->AddRectFilled(p, ImVec2(p.x + 80, p.y + 280), IM_COL32(70, 130, 180, 255));
-            ImGui::SetCursorPos(ImVec2(10, 10));
-            ImGui::Text("1\nPNO");
+            for (int i = 0; i < NUM_TRACKS; i++) {
+                char track_label[16];
+                snprintf(track_label, sizeof(track_label), "Track %d", i + 1);
+                draw_list->AddText(ImVec2(p.x + 10, p.y + 20 + (i * 60)), IM_COL32(255, 255, 255, 255), track_label);
+            }
 
-            // Draw generic notes on the timeline for visual testing
-            draw_list->AddRectFilled(ImVec2(p.x + 100, p.y + 150), ImVec2(p.x + 130, p.y + 165), IM_COL32(100, 150, 250, 255));
-            draw_list->AddRectFilled(ImVec2(p.x + 130, p.y + 180), ImVec2(p.x + 190, p.y + 195), IM_COL32(100, 150, 250, 255));
-            draw_list->AddRectFilled(ImVec2(p.x + 280, p.y + 120), ImVec2(p.x + 400, p.y + 135), IM_COL32(100, 150, 250, 255));
-            draw_list->AddRectFilled(ImVec2(p.x + 280, p.y + 150), ImVec2(p.x + 400, p.y + 165), IM_COL32(100, 150, 250, 255));
-            draw_list->AddRectFilled(ImVec2(p.x + 280, p.y + 180), ImVec2(p.x + 400, p.y + 195), IM_COL32(100, 150, 250, 255));
+            // 3. Draw the Grid and Notes
+            float start_x = p.x + 90; // Start drawing after the header
+            float start_y = p.y + 15;
+            float cell_w = 22;        // Width of one step
+            float cell_h = 30;        // Height of one track
+            float spacing_y = 60;     // Space between tracks
+
+            for (int t = 0; t < NUM_TRACKS; t++) {
+                for (int s = 0; s < NUM_STEPS; s++) {
+                    ImVec2 cell_min(start_x + (s * cell_w), start_y + (t * spacing_y));
+                    ImVec2 cell_max(cell_min.x + cell_w - 2, cell_min.y + cell_h);
+                    
+                    // Draw placed notes (Blue blocks)
+                    if (grid_data[t][s]) {
+                        draw_list->AddRectFilled(cell_min, cell_max, IM_COL32(100, 150, 250, 255));
+                    } else {
+                        // Draw empty faint grid slots to guide the user
+                        draw_list->AddRect(cell_min, cell_max, IM_COL32(100, 100, 100, 80));
+                    }
+
+                    // Draw the Cursor (Thick Yellow Box)
+                    if (t == cursor_track && s == cursor_step) {
+                        draw_list->AddRect(cell_min, cell_max, IM_COL32(255, 255, 0, 255), 0.0f, 0, 2.0f); 
+                    }
+                }
+            }
         }
 
         // Draw Bottom Transport Bar (Yellow/Brownish)
