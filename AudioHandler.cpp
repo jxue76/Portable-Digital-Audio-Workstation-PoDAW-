@@ -2,22 +2,22 @@
 
 int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData) {
-    float *buffer = (float *) out;
+    AudioHandler* handler = static_cast<AudioHandler*>(userData);
+    float *buffer = (float *) outputBuffer;
 
-    for (unsigned int i = 0; i < frames; i++)
+    for (unsigned int i = 0; i < nBufferFrames; i++)
     {
         float sample = 0.0f;
 
-        for (auto &instrument_notes : activeNotes)
+        for (auto &instrument_notes : handler->activeNotes)
         {
-            sample += instrument_notes.first->tick();
+            sample += instrument_notes.first->getStkInstrument()->tick();
 
         }
 
         sample *= 0.2f;  // avoid clipping
 
-        buffer[2*i] = sample;
-        buffer[2*i+1] = sample;
+        buffer[i] = sample;
     }
 
     return 0;
@@ -25,7 +25,7 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
 
 AudioHandler::AudioHandler() {
     outputParams.deviceId = audio.getDefaultOutputDevice();
-    outputParams.nChannels = 1; // Stereo output
+    outputParams.nChannels = 1; // Mono output
     audio.openStream(&outputParams, nullptr, RTAUDIO_FLOAT32, 48000, &bufferFrames, &audio_callback, this);
     audio.startStream();
 }

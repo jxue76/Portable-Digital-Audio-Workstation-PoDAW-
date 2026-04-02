@@ -1,3 +1,5 @@
+#include <thread>
+#include <chrono>
 #include "AudioHandler.hpp"
 #include "Instrument.hpp"
 #include "Piano.hpp"
@@ -27,7 +29,8 @@ int main() {
     Note snare(38, 1.0f); // Snare drum
     Note hihat(42, 1.0f); // Hi-hat
 
-    while (true) {
+    int iterations = 0;
+    while (iterations < 10) {  // Run for 10 cycles instead of infinite
         audioHandler.addNoteToInstrument(piano, c4);
         audioHandler.printActiveNotes();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -49,6 +52,7 @@ int main() {
         audioHandler.removeNoteFromInstrument(drums, snare);
         audioHandler.removeNoteFromInstrument(drums, hihat);
         audioHandler.printActiveNotes();
+        iterations++;
     }
 
     return 0;

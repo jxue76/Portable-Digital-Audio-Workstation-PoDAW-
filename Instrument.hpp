@@ -14,18 +14,18 @@ public:
         return 440.0 * pow(2.0, (midiNote - 69) / 12.0); // Standard MIDI to frequency conversion
     }
 
-    std::string getName() const inline {
+    inline std::string getName() const {
         return name;
-    };
+    }
     std::shared_ptr<stk::Instrmnt> getStkInstrument() const;
-    std::float getVolume() const inline {
+    inline float getVolume() const {
         return volume;
     }
-    void setVolume(float newVolume) inline {
+    inline void setVolume(float newVolume) {
         volume = newVolume;
     }
 
-    static int mapBetween(int x, int a, int b) inline {
+    static int mapBetween(int x, int a, int b) {
         int range = b - a + 1;
         int offset = x - a;
         int modded = (offset % range + range) % range; // % is not a true modulo operator in C++, so we adjust for negative values

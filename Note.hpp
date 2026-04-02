@@ -1,10 +1,12 @@
+#include <stk/Stk.h>
+
 class Note {
 public:
     Note(int midiNote, stk::StkFloat amplitude) : midiNote(midiNote), amplitude(amplitude) {}
-    int getMidiNote() const inline {
+    inline int getMidiNote() const {
         return midiNote;
     }
-    stk::StkFloat getAmplitude() const inline {
+    inline stk::StkFloat getAmplitude() const {
         return amplitude;
     }
 private:
