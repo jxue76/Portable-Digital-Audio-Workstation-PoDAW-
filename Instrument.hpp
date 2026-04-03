@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
+#include <cmath>
 #include <stk/Instrmnt.h>
 
 

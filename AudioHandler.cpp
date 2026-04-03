@@ -53,7 +53,7 @@ bool AudioHandler::addNoteToInstrument(std::shared_ptr<Instrument> instrument, N
     return inserted;
 }
 
-AudioHandler::removeNoteFromInstrument(std::shared_ptr<Instrument> instrument, Note note) {
+bool AudioHandler::removeNoteFromInstrument(std::shared_ptr<Instrument> instrument, Note note) {
     auto it = activeNotes.find(instrument);
     if (it != activeNotes.end()) {
         size_t erased = it->second.erase(note);

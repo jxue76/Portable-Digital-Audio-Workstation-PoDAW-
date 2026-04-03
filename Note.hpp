@@ -10,6 +10,9 @@ public:
     inline stk::StkFloat getAmplitude() const {
         return amplitude;
     }
+    inline bool operator<(const Note& other) const {
+        return midiNote < other.midiNote; // Compare based on MIDI note number for ordering in sets
+    }
 private:
     int midiNote;
     stk::StkFloat amplitude;
