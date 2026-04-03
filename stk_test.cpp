@@ -1,5 +1,6 @@
 #include <thread>
 #include <chrono>
+#include <iostream>
 #include "AudioHandler.hpp"
 #include "Instrument.hpp"
 #include "Piano.hpp"
@@ -31,6 +32,7 @@ int main() {
 
     int iterations = 0;
     while (iterations < 10) {  // Run for 10 cycles instead of infinite
+        std::cout << "Iteration " << iterations + 1 << std::endl;
         audioHandler.addNoteToInstrument(piano, c4);
         audioHandler.printActiveNotes();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
