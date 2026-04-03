@@ -9,7 +9,7 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
     {
         float sample = 0.0f;
 
-        for (auto &instrument_notes : handler->activeNotes)
+        for (auto &instrument_notes : handler->readActiveNotes())
         {
             sample += instrument_notes.first->getStkInstrument()->tick();
 
