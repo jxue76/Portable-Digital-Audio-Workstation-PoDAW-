@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <memory>
 #include <stdexcept>
@@ -9,7 +11,7 @@ public:
     Instrument();
     Instrument(std::string name, std::shared_ptr<stk::Instrmnt> stkInstrument, int midiMin, int midiMax, float volume);
     virtual ~Instrument();
-    virtual Stk::StkFloat midiToFrequency(int midiNote) const {
+    virtual stk::StkFloat midiToFrequency(int midiNote) const {
         midiNote = mapBetween(midiNote, midiMin, midiMax);
         return 440.0 * pow(2.0, (midiNote - 69) / 12.0); // Standard MIDI to frequency conversion
     }

@@ -35,17 +35,17 @@ AudioHandler::~AudioHandler() {
         audio.closeStream();
     }
 }
-AudioHandler::addInstrument(std::shared_ptr<Instrument> instrument) {
+bool AudioHandler::addInstrument(std::shared_ptr<Instrument> instrument) {
     if (activeNotes.find(instrument) != activeNotes.end()) {
         return false; // Instrument already exists
     }
     activeNotes[instrument] = std::set<Note>(); // Initialize with an empty set of notes
     return true;
 }
-AudioHandler::removeInstrument(std::shared_ptr<Instrument> instrument) {
+bool AudioHandler::removeInstrument(std::shared_ptr<Instrument> instrument) {
     return activeNotes.erase(instrument) > 0; // Returns true if an instrument was removed
 }
-AudioHandler::addNoteToInstrument(std::shared_ptr<Instrument> instrument, Note note) {
+bool AudioHandler::addNoteToInstrument(std::shared_ptr<Instrument> instrument, Note note) {
     bool inserted = activeNotes[instrument].insert(note).second;
     if (inserted) {
         instrument->getStkInstrument()->noteOn(instrument->midiToFrequency(note.getMidiNote()), note.getAmplitude() * instrument->getVolume());
@@ -65,7 +65,7 @@ AudioHandler::removeNoteFromInstrument(std::shared_ptr<Instrument> instrument, N
     return false;
 }
 
-AudioHandler::printActiveNotes() const {
+void AudioHandler::printActiveNotes() const {
     for (const auto &instrument_notes : activeNotes) {
         std::cout << "Instrument: " << instrument_notes.first->getName() << " - Active Notes: ";
         for (const auto &note : instrument_notes.second) {
