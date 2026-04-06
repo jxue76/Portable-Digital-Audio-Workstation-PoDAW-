@@ -3,20 +3,17 @@ project(PoDAW)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# 1. Auto-download GLFW in the background
 include(FetchContent)
 FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
     GIT_TAG 3.3.8
 )
-# Turn off GLFW extras to speed up the build
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw)
 
-# 2. Define ImGui Sources
 set(IMGUI_SOURCES
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
@@ -27,14 +24,37 @@ set(IMGUI_SOURCES
     imgui/backends/imgui_impl_opengl3.cpp
 )
 
-# 3. Create Executable
-add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES})
+set(PODAW_SOURCES
+    main.cpp
+    Inputs.cpp
+    Sequencer.cpp
+    SettingsUI.cpp
+    SequencerUI.cpp
+)
 
-# 4. Include Directories
-target_include_directories(PoDAW_Test PRIVATE 
+# Platform-specific input backend
+if(PODAW_USE_GPIO)
+    list(APPEND PODAW_SOURCES GpioInputs.cpp)
+else()
+    list(APPEND PODAW_SOURCES KeyboardInputs.cpp)
+endif()
+
+add_executable(PoDAW_Test ${PODAW_SOURCES} ${IMGUI_SOURCES})
+
+target_include_directories(PoDAW_Test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
 )
 
-# 5. Link Libraries (glfw now comes from the auto-download)
-target_link_libraries(PoDAW_Test PRIVATE glfw opengl32 gdi32)
+target_link_libraries(PoDAW_Test PRIVATE glfw)
+
+if(WIN32)
+    target_link_libraries(PoDAW_Test PRIVATE opengl32 gdi32)
+elseif(UNIX)
+    find_package(OpenGL REQUIRED)
+    target_link_libraries(PoDAW_Test PRIVATE OpenGL::GL)
+    if(PODAW_USE_GPIO)
+        target_link_libraries(PoDAW_Test PRIVATE gpiodcxx)
+    endif()
+endif()

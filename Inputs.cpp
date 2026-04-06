@@ -13,3 +13,7 @@ bool Inputs::isAPressed() const { return false; }
 bool Inputs::isBPressed() const { return false; }
 bool Inputs::isXPressed() const { return false; }
 Dial Inputs::getDialPosition() const { return Dial::NEUTRAL; }
+bool Inputs::pollMidiInputEvent(MidiInputEvent& event) const {
+    (void)event;
+    return false;
+}
