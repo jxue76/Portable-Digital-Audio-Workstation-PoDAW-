@@ -27,8 +27,22 @@ set(IMGUI_SOURCES
     imgui/backends/imgui_impl_opengl3.cpp
 )
 
-# 3. Create Executable
+# Added stk subdirectory (already configured with a CMakeLists.txt) and audio surce code
+add_subdirectory(stk)
+
+set(AUDIO_CODE_SOURCES
+    Instrument.cpp
+    Piano.cpp
+    Drums.cpp
+    Guitar.cpp
+    Bass.cpp
+    AudioHandler.cpp
+)
+
+# 3. Create Executables
 add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES})
+
+add_executable(STK_Test stk_test.cpp ${AUDIO_CODE_SOURCES})
 
 # 4. Include Directories
 target_include_directories(PoDAW_Test PRIVATE 
@@ -36,5 +50,9 @@ target_include_directories(PoDAW_Test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
 )
 
+target_include_directories(STK_Test PRIVATE stk/include)
+
 # 5. Link Libraries (glfw now comes from the auto-download)
 target_link_libraries(PoDAW_Test PRIVATE glfw opengl32 gdi32)
+
+target_link_libraries(STK_Test PRIVATE stk)
