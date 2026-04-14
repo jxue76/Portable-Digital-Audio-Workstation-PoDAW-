@@ -1,7 +1,8 @@
 #include "Drums.hpp"
 #include "Drummer.h"
 
-Drums::Drums() : Instrument("Drums", std::make_shared<stk::Drummer>(), 36, 81, 1.0f) {
+Drums::Drums()
+    : Instrument("Drums", []() { return std::make_unique<stk::Drummer>(); }, 36, 81, 1.0f) {
 }
 
 stk::StkFloat Drums::midiToFrequency(int midiNote) const {

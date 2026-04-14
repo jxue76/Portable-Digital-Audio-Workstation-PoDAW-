@@ -11,8 +11,7 @@ int audio_callback(void *outputBuffer, void *inputBuffer, unsigned int nBufferFr
 
         for (auto &instrument_notes : handler->readActiveNotes())
         {
-            sample += instrument_notes.first->getStkInstrument()->tick();
-
+            sample += instrument_notes.first->tick();
         }
 
         sample *= 0.2f;  // avoid clipping
@@ -48,7 +47,7 @@ bool AudioHandler::removeInstrument(std::shared_ptr<Instrument> instrument) {
 bool AudioHandler::addNoteToInstrument(std::shared_ptr<Instrument> instrument, Note note) {
     bool inserted = activeNotes[instrument].insert(note).second;
     if (inserted) {
-        instrument->getStkInstrument()->noteOn(instrument->midiToFrequency(note.getMidiNote()), note.getAmplitude() * instrument->getVolume());
+        instrument->noteOn(note);
     }
     return inserted;
 }
@@ -58,7 +57,7 @@ bool AudioHandler::removeNoteFromInstrument(std::shared_ptr<Instrument> instrume
     if (it != activeNotes.end()) {
         size_t erased = it->second.erase(note);
         if (erased > 0) {
-            instrument->getStkInstrument()->noteOff(instrument->midiToFrequency(note.getMidiNote()));
+            instrument->noteOff(note);
             return true;
         }
     }

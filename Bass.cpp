@@ -1,5 +1,6 @@
 #include "Bass.hpp"
 #include "StifKarp.h"
 
-Bass::Bass() : Instrument("Bass", std::make_shared<stk::StifKarp>(), 36, 81, 1.0f) {
+Bass::Bass()
+    : Instrument("Bass", []() { return std::make_unique<stk::StifKarp>(); }, 36, 81, 1.0f) {
 }
