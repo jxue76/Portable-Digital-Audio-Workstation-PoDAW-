@@ -1,19 +1,25 @@
-/*
-This is the top-level interface for reading inputs from the hardware. It defines the Inputs class, which provides virtual methods for checking the state of various buttons and a dial.
-*/
+#ifndef INPUTS_HPP
+#define INPUTS_HPP
 
-//Defines dial states
+#include <cstdint>
+
 enum class Dial {
     UP,
     DOWN,
     NEUTRAL
 };
 
-//Defines all pollable inputs: buttons (up, down, left, right, A, B, X) and a dial (up, down, neutral)
+struct MidiInputEvent {
+    uint8_t note = 60;
+    uint8_t velocity = 100;
+    bool noteOn = true;
+};
+
 class Inputs {
 protected:
     Inputs();
 public:
+    virtual ~Inputs() = default;
     virtual bool isUpPressed() const;
     virtual bool isDownPressed() const;
     virtual bool isLeftPressed() const;
@@ -22,4 +28,7 @@ public:
     virtual bool isBPressed() const;
     virtual bool isXPressed() const;
     virtual Dial getDialPosition() const;
+    virtual bool pollMidiInputEvent(MidiInputEvent& event) const;
 };
+
+#endif
