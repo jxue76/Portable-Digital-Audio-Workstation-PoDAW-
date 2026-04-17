@@ -79,8 +79,8 @@ void test1(AudioHandler& audioHandler) {
 
     for (int i = 0; i < 5; i++) {
         audioHandler.addNoteToInstrument(piano, c4);
-        audioHandler.addNoteToInstrument(piano, c4);
-        audioHandler.addNoteToInstrument(piano, c4);
+        audioHandler.addNoteToInstrument(piano, e4);
+        audioHandler.addNoteToInstrument(piano, g4);
         audioHandler.addNoteToInstrument(drums, kick);
         audioHandler.addNoteToInstrument(drums, hihat);
         audioHandler.printActiveNotes();
