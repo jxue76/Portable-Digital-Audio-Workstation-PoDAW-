@@ -30,6 +30,7 @@ set(PODAW_SOURCES
     Sequencer.cpp
     SettingsUI.cpp
     SequencerUI.cpp
+    IndividualTrack.cpp
 )
 
 # Platform-specific input backend

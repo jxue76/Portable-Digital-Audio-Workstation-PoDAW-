@@ -7,9 +7,10 @@
 #include "Sequencer.hpp"
 #include "SettingsUI.hpp"
 #include "SequencerUI.hpp"
+#include "IndividualTrack.hpp"
 #include "KeyboardInputs.hpp"
 
-enum AppState { SEQUENCER, SETTINGS };
+enum AppState { SEQUENCER, SETTINGS, INDIVIDUAL };
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -46,6 +47,7 @@ int main(int, char**) {
     Sequencer     sequencer;
     SettingsUI    settingsUI;
     SequencerUI   sequencerUI;
+    IndividualTrackUI individualUI;
     KeyboardInputs inputs(window);
 
     AppState currentState = SETTINGS;
@@ -54,7 +56,7 @@ int main(int, char**) {
         glfwPollEvents();
 
         if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
-            currentState = (currentState == SEQUENCER) ? SETTINGS : SEQUENCER;
+            currentState = (currentState == INDIVIDUAL) ? SETTINGS : INDIVIDUAL;
         }
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -69,8 +71,10 @@ int main(int, char**) {
 
         if (currentState == SETTINGS) {
             settingsUI.render(sequencer);
-        } else {
+        } else if (currentState == SEQUENCER) {
             sequencerUI.render(sequencer, inputs, io.DeltaTime);
+        } else if (currentState == INDIVIDUAL) {
+            individualUI.render(sequencer, inputs, io.DeltaTime, true);
         }
 
         ImGui::End();

@@ -13,7 +13,7 @@ void SettingsUI::render(Sequencer& seq) {
 
     ImGui::SameLine();
 
-    ImGui::BeginChild("RightContent", ImVec2(0, 280), ImGuiChildFlags_Borders);
+    ImGui::BeginChild("RightContent", ImVec2(0, 280), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
     switch (selectedMenu) {
         case 0: renderPlayback(seq);  break;
         case 1: renderRecording(seq); break;
@@ -35,21 +35,32 @@ void SettingsUI::renderPlayback(Sequencer& seq) {
     ImGui::SetCursorPosX(20);
     ImGui::Text("Time Sig:");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(40);
-    ImGui::InputInt("##tsNum", &seq.timeSigNum, 0, 0);
+    ImGui::SetNextItemWidth(80);
+    ImGui::InputInt("##tsNum", &seq.timeSigNum, 1, 0);
     ImGui::SameLine();
     ImGui::Text("/");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(40);
-    ImGui::InputInt("##tsDen", &seq.timeSigDen, 0, 0);
+    ImGui::SetNextItemWidth(80);
+    ImGui::InputInt("##tsDen", &seq.timeSigDen, 1, 0);
     if (seq.timeSigNum < 1) seq.timeSigNum = 1;
+    if (seq.timeSigNum > 32) seq.timeSigNum = 32;
+
     if (seq.timeSigDen < 1) seq.timeSigDen = 1;
+    if (seq.timeSigDen > 32) seq.timeSigDen = 32;
 
     ImGui::SetCursorPosX(20);
     ImGui::Checkbox("Loop", &seq.looping);
 
     ImGui::SetCursorPosX(20);
     ImGui::Checkbox("Metronome", &seq.metronome);
+
+    ImGui::SetCursorPosX(20);
+    ImGui::Text("Selected Track: ");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(100);
+    ImGui::InputInt("##currentTrack", &seq.currentTrack, 1, 10);
+    if (seq.currentTrack < 1) seq.currentTrack = 1;
+    if (seq.currentTrack > seq.NUM_TRACKS) seq.currentTrack = seq.NUM_TRACKS;
 }
 
 void SettingsUI::renderRecording(Sequencer& seq) {
