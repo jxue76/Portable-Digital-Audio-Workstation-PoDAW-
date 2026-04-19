@@ -66,18 +66,37 @@ void test0() {
 void test1() {
     std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
         { std::chrono::milliseconds(100), MidiMessage(Note(60, 1.0f), true) },
-        { std::chrono::milliseconds(300), MidiMessage(Note(60, 1.0f), false) }
+        { std::chrono::milliseconds(300), MidiMessage(Note(60, 1.0f), false) },
+        { std::chrono::milliseconds(500), MidiMessage(Note(64, 1.0f), true) },
+        { std::chrono::milliseconds(700), MidiMessage(Note(64, 1.0f), false) },
+        { std::chrono::milliseconds(900), MidiMessage(Note(67, 1.0f), true) },
+        { std::chrono::milliseconds(1100), MidiMessage(Note(67, 1.0f), false) }
     };
 
     TestMidiHandler testMidi(schedule);
-    while (true) {
+    MidiRecorder recorder;
+    std::shared_ptr<Piano> piano = std::make_shared<Piano>();
+    recorder.setInstrument(piano);
+    recorder.start();
+
+    while (recorder.getElapsedTime() < std::chrono::seconds(2)) {
         testMidi.update();
         if (testMidi.hasMessages()) {
             MidiMessage msg = testMidi.popMessage();
-            // process msg
+            std::cout << "Test MIDI message: Note " << msg.getNote().getMidiNote() 
+                      << (msg.isOn() ? " ON" : " OFF") << std::endl;
+            recorder.process(msg);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+
+    MidiRecording recording = recorder.stop();
+    MidiPlayer player(recorder);
+    player.play(recording);
+    while (player.isPlaying()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    player.stop();
 }
 
 void test2() {

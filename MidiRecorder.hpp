@@ -9,6 +9,16 @@
 
 class MidiRecorder {
 public:
+
+    std::chrono::microseconds getElapsedTime() const {
+        std::chrono::microseconds elapsed(0);
+        if (!recording) {
+            return elapsed;
+        }
+        auto now = Clock::now();
+        elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - startTime);
+        return elapsed;
+    }
     void start(); // Clears existing events and starts recording
     MidiRecording stop(); // returns finished recording
 
