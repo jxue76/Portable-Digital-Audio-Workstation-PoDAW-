@@ -11,7 +11,7 @@ void MidiPlayer::play(const MidiRecording& recording, bool loop) {
 
     std::cout << "Starting playback of recording with " << recording.getEvents().size() << " events." << std::endl;
     // Create a copy and sort by timestamp
-    MidiRecording sortedRecording = recording;
+    MidiRecording sortedRecording(recording);
     std::sort(sortedRecording.getEvents().begin(), sortedRecording.getEvents().end(), 
               [](const TimedMidiMessage& a, const TimedMidiMessage& b) {
                   return a.getTimestamp() < b.getTimestamp();

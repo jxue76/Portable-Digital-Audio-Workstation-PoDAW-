@@ -21,6 +21,7 @@ private:
 class MidiRecording {
 public:
     MidiRecording() = default;
+    MidiRecording(const &MidiRecording) = default;
     std::vector<TimedMidiMessage> getEvents() const { return events; }
     std::chrono::microseconds getLength() const { return length; }
     std::shared_ptr<Instrument> getInstrument() const { return instrument; }
