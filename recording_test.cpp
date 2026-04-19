@@ -33,6 +33,7 @@ void test0() {
     MidiPlayer player(audioHandler);
     player.play(recording);
 
+    std::cout << "Waiting for playback to finish..." << std::endl;
     auto timeout = std::chrono::steady_clock::now() + std::chrono::seconds(2);
     while (player.isPlaying() && std::chrono::steady_clock::now() < timeout) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
