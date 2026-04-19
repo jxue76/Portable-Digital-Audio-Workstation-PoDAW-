@@ -6,6 +6,7 @@
 #include "Piano.hpp"
 
 int main() {
+    stk::Stk::setRawwavePath("../stk/rawwaves/");
     MidiHandler midiHandler;
     AudioHandler audioHandler;
 

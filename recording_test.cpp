@@ -154,6 +154,7 @@ void test2() {
 }
 
 int main(int argc, char* argv[]) {
+    stk::Stk::setRawwavePath("../stk/rawwaves/");
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <test_number>" << std::endl;
         return 1;
