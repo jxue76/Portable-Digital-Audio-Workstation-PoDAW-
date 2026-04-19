@@ -19,6 +19,8 @@ void MidiPlayer::play(const MidiRecording& recording, bool loop) {
                   return a.getTimestamp() < b.getTimestamp();
               });
 
+    std::cout << "Recording sorted" << std::endl;
+
     playing = true;
 
     std::cout << "Launching playback thread..." << std::endl;
