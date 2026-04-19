@@ -17,7 +17,7 @@ public:
 protected:
     std::vector<MidiMessage> midiMessages;
 private:
-    std::unique_ptr<RtMidiIn> midiIn;
+    RtMidiIn midiIn;
 };
 
 class TestMidiHandler : public MidiHandler {

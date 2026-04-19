@@ -36,11 +36,10 @@ void midiCallback(double deltatime, std::vector<unsigned char>* message, void* u
 
 MidiHandler::MidiHandler(bool enableDevice) {
     if (enableDevice) {
-        midiIn = std::make_unique<RtMidiIn>();
-        if (midiIn->getPortCount() > 0) {
-            midiIn->openPort(0); // Open the first available MIDI port
-            midiIn->ignoreTypes(true, true, true); // Ignore sysex, timing, and active sensing messages
-            midiIn->setCallback(&midiCallback, this);
+        if (midiIn.getPortCount() > 0) {
+            midiIn.openPort(0); // Open the first available MIDI port
+            midiIn.ignoreTypes(true, true, true); // Ignore sysex, timing, and active sensing messages
+            midiIn.setCallback(&midiCallback, this);
             std::cout << "MIDI input device initialized and callback set." << std::endl;
         } else {
             std::cerr << "No MIDI input ports available!" << std::endl;
@@ -49,8 +48,8 @@ MidiHandler::MidiHandler(bool enableDevice) {
 }
 
 MidiHandler::~MidiHandler() {
-    if (midiIn && midiIn->isPortOpen()) {
-        midiIn->closePort();
+    if (midiIn && midiIn.isPortOpen()) {
+        midiIn.closePort();
     }
 }
 
