@@ -36,7 +36,7 @@ void midiCallback(double deltatime, std::vector<unsigned char>* message, void* u
 
 MidiHandler::MidiHandler(bool enableDevice) {
     if (enableDevice) {
-        std:cout << midiIn.getPortCount() << " MIDI input ports available." << std::endl;
+        std::cout << midiIn.getPortCount() << " MIDI input ports available." << std::endl;
         for (unsigned int i = 0; i < midiIn.getPortCount(); i++) {
             std::string portName = midiIn.getPortName(i);
             std::cout << "Port " << i << ": " << portName << std::endl;
