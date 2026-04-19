@@ -2,6 +2,8 @@
 
 void midiCallback(double deltatime, std::vector<unsigned char>* message, void* userData) {
     MidiHandler* handler = static_cast<MidiHandler*>(userData);
+
+    std::cout << "Received MIDI message" <<std::endl;
     
     if (message->size() >= 3) {
         unsigned char status = message->at(0);
