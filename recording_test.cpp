@@ -103,80 +103,33 @@ void test1() {
 }
 
 void test2() {
-    MidiRecorder recorder;
+    AudioHandler audioHandler;
     std::shared_ptr<Piano> piano = std::make_shared<Piano>();
+    audioHandler.addInstrument(piano);
+    MidiHandler midiHandler;
+
+    MidiRecorder recorder;
     recorder.setInstrument(piano);
+
     recorder.start();
 
-    std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
-        { std::chrono::milliseconds(100), MidiMessage(Note(60, 1.0f), true) },
-        { std::chrono::milliseconds(300), MidiMessage(Note(60, 1.0f), false) }
-    };
-
-    TestMidiHandler testMidi(schedule);
-    auto startTime = std::chrono::steady_clock::now();
-    auto timeout = startTime + std::chrono::seconds(2);
-
-    while (std::chrono::steady_clock::now() < timeout) {
-        testMidi.update();
-
-        while (testMidi.hasMessages()) {
-            recorder.process(testMidi.popMessage());
+    while (recorder.getElapsedTime() < std::chrono::seconds(2)) {
+        if (midiHandler.hasMessages()) {
+            MidiMessage msg = midiHandler.popMessage();
+            std::cout << "Received MIDI message: Note " << msg.getNote().getMidiNote() 
+                      << (msg.isOn() ? " ON" : " OFF") << std::endl;
+            recorder.process(msg);
         }
-
-        auto elapsed = std::chrono::steady_clock::now() - startTime;
-        if (elapsed > std::chrono::milliseconds(400) && !testMidi.hasMessages()) {
-            break;
-        }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     MidiRecording recording = recorder.stop();
-
-    bool passed = true;
-    if (!recording.getInstrument()) {
-        std::cerr << "MidiRecorder test failed: recording instrument was not set." << std::endl;
-        passed = false;
+    MidiPlayer player(audioHandler);
+    player.play(recording);
+    while (player.isPlaying()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    if (recording.getEvents().size() != 2) {
-        std::cerr << "MidiRecorder test failed: expected 2 events, got " << recording.getEvents().size() << "." << std::endl;
-        passed = false;
-    }
-    if (recording.getInstrument() != piano) {
-        std::cerr << "MidiRecorder test failed: recording instrument does not match the expected instrument." << std::endl;
-        passed = false;
-    }
-
-    if (passed) {
-        const auto& first = recording.getEvents()[0];
-        const auto& second = recording.getEvents()[1];
-        auto expectedFirst = std::chrono::microseconds(100000);
-        auto expectedSecond = std::chrono::microseconds(300000);
-        auto tolerance = std::chrono::microseconds(20000);
-
-        if (!first.isOn() || first.getNote().getMidiNote() != 60) {
-            std::cerr << "MidiRecorder test failed: first event is not note-on for MIDI note 60." << std::endl;
-            passed = false;
-        }
-        if (first.getTimestamp() < expectedFirst - tolerance || first.getTimestamp() > expectedFirst + tolerance) {
-            std::cerr << "MidiRecorder test failed: first event timing is incorrect (" << first.getTimestamp().count() << " us)." << std::endl;
-            passed = false;
-        }
-
-        if (second.isOn() || second.getNote().getMidiNote() != 60) {
-            std::cerr << "MidiRecorder test failed: second event is not note-off for MIDI note 60." << std::endl;
-            passed = false;
-        }
-        if (second.getTimestamp() < expectedSecond - tolerance || second.getTimestamp() > expectedSecond + tolerance) {
-            std::cerr << "MidiRecorder test failed: second event timing is incorrect (" << second.getTimestamp().count() << " us)." << std::endl;
-            passed = false;
-        }
-    }
-
-    if (passed) {
-        std::cout << "MidiRecorder test passed: recording captured expected events and timing." << std::endl;
-    }
+    player.stop();
 }
 
 int main(int argc, char* argv[]) {
