@@ -34,6 +34,9 @@ void MidiHandler::midiCallback(double deltatime, std::vector<unsigned char>* mes
         bool isNoteOn = (status >= 0x90 && status <= 0x9F);
         bool isNoteOff = (status >= 0x80 && status <= 0x8F) || (isNoteOn && data2 == 0);
         
+        std::cout << "Received MIDI message: Status " << std::hex << (int)status << std::dec 
+                  << ", Data1 " << (int)data1 << ", Data2 " << (int)data2 
+                  << " (Note " << (int)data1 << ", " << (isNoteOn ? "ON" : "OFF") << ")" << std::endl;
         if (isNoteOn || isNoteOff) {
             // Extract channel (lower 4 bits of status)
             unsigned char channel = status & 0x0F;
