@@ -17,7 +17,6 @@ protected:
     void pushMessage(const MidiMessage& msg);
     std::vector<MidiMessage> midiMessages;
 private:
-    static void midiCallback(double deltatime, std::vector<unsigned char>* message, void* userData);
     std::unique_ptr<RtMidiIn> midiIn;
 };
 

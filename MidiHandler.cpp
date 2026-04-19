@@ -6,7 +6,7 @@ MidiHandler::MidiHandler(bool enableDevice) {
         if (midiIn->getPortCount() > 0) {
             midiIn->openPort(0); // Open the first available MIDI port
             midiIn->ignoreTypes(true, true, true); // Ignore sysex, timing, and active sensing messages
-            midiIn->setCallback(&MidiHandler::midiCallback, this);
+            midiIn->setCallback(&midiCallback, this);
         }
     }
 }
@@ -22,7 +22,7 @@ void MidiHandler::pushMessage(const MidiMessage& msg) {
     printf("Pushed MIDI message: Note %d, %s\n", msg.getNote().getMidiNote(), msg.isOn() ? "ON" : "OFF");
 }
 
-void MidiHandler::midiCallback(double deltatime, std::vector<unsigned char>* message, void* userData) {
+void midiCallback(double deltatime, std::vector<unsigned char>* message, void* userData) {
     MidiHandler* handler = static_cast<MidiHandler*>(userData);
     
     if (message->size() >= 3) {
@@ -33,7 +33,7 @@ void MidiHandler::midiCallback(double deltatime, std::vector<unsigned char>* mes
         // Check if it's a note on or note off message
         bool isNoteOn = (status >= 0x90 && status <= 0x9F);
         bool isNoteOff = (status >= 0x80 && status <= 0x8F) || (isNoteOn && data2 == 0);
-        
+
         std::cout << "Received MIDI message: Status " << std::hex << (int)status << std::dec 
                   << ", Data1 " << (int)data1 << ", Data2 " << (int)data2 
                   << " (Note " << (int)data1 << ", " << (isNoteOn ? "ON" : "OFF") << ")" << std::endl;
