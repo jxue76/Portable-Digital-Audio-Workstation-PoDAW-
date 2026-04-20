@@ -31,7 +31,7 @@ void IndividualTrackUI::render(Sequencer& seq, Inputs& inputs, float dt, MidiRec
     /*for (int i = 0; i < 26; i++) {
         if (i%2==0) dl->AddRectFilled(ImVec2(-10000, i*ppn), ImVec2(10000, i*ppn+ppn), IM_COL32(90,80,30,255));
     }*/
-
+    printf("E\n");
     if (!isMoving){
         if (fastMovement) dl->AddRectFilled(ImVec2(0,0),ImVec2(40,280),IM_COL32(180,130,70,255));
         else if (!fastMovement) dl->AddRectFilled(ImVec2(0,0), ImVec2(40, 280), IM_COL32(70, 130, 180, 255));}
@@ -41,7 +41,8 @@ void IndividualTrackUI::render(Sequencer& seq, Inputs& inputs, float dt, MidiRec
     snprintf(track_num, sizeof(track_num), "%d", seq.currentTrack);
     dl->AddText(ImVec2(10, 20), IM_COL32(255,255,255,255), track_num);
     // Next is track instrument
-    snprintf(track_num, sizeof(track_num), "%s", recordedNotes.getInstrument().get()->getName());
+    if (recordedNotes.getInstrument()) snprintf(track_num, sizeof(track_num), "%s", recordedNotes.getInstrument().get()->getName());
+    else snprintf(track_num, sizeof(track_num), "%s", "PNO");
     dl->AddText(ImVec2(10,30), IM_COL32(255,255,255,255), track_num);
     if (playback) {
         snprintf(track_num, sizeof(track_num), "PLAY");
@@ -187,8 +188,11 @@ void IndividualTrackUI::drawNotes(MidiRecording& recordedNotes, Sequencer& seq) 
     dl->AddRectFilled(ImVec2(11*ppb+40, 14*ppn), ImVec2(15*ppb+40, 15*ppn+ppn), white);
     */
 
-    std::vector<TimedMidiMessage>& events = recordedNotes.getEvents();
-
+    std::vector<TimedMidiMessage> events;
+    if (recordedNotes.getLength().count() != 0) events = recordedNotes.getEvents();
+    else {
+        return;
+    }
     // Equation for timestamp to beat conversion:
     // timestamp*0.1^6*seq.tempo/60
     double t = 1000000.0;

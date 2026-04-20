@@ -28,6 +28,37 @@ static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+// Return boolean to use for isMoving
+bool playbackToggle(double timestamp_position, IndividualTrackUI& individualUI,
+                    std::vector<MidiRecording>& recordings, int selectedTrack) {
+    // timestamp_position is in seconds, I don't know if you needed input timestamp to be in milli or microseconds so we can do the conversion here
+    // microsecond conversion for example
+    double timestamp_playback = timestamp_position * 1000000.0;
+    // Add compatibility to check if app is already playing back, if so then playback can be stopped and cursor position reset
+    // For now just make the app playback every single track, we'll see if single track playback is complex later
+
+    //individualUI.isMoving = false; // if not playing
+    //individualUI.isMoving = true; // if playing
+
+    return false; // If not playing
+    return true; // If playing
+}
+
+void recordToggle(MidiRecorder& recorder, MidiRecording& recording,
+            double timestamp_pos, IndividualTrackUI& individualUI, Sequencer& seq, bool& isMoving) {
+    if (!isMoving) {
+        if (timestamp_pos <= 0) {
+            // Add recording from timestamp 0 here
+        } else {
+            // Add recording from cursorPosition here 
+        }
+        isMoving = true;
+    } else {
+        // Stop recording here and return recording to 'recording' variable
+        isMoving = false;
+    }
+}
+
 int main(int, char**) {
     // Set MIDI 
     stk::Stk::setRawwavePath("../stk/rawwaves/");
@@ -86,6 +117,15 @@ int main(int, char**) {
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+        ImGui::SetNextWindowSize(ImVec2(480, 320));
+        ImGui::Begin("MainApp", nullptr,
+                     ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
+                     ImGuiWindowFlags_NoResize     | ImGuiWindowFlags_NoSavedSettings);
         
         // isPlayback is true if playback option is chosen, false is recording option is chosen
         if (sequencer.currentMode == 0 && !isPlayback) {isPlayback=true; individualUI.playback = true;}
@@ -102,31 +142,18 @@ int main(int, char**) {
         }
         // Playback/Record button is A for individual track viewer,
         // for individual track viewer B will toggle between fast movement
-        if (currentState == INDIVIDUAL){
+        if (currentState == INDIVIDUAL && inputs.isAPressed()){
             double timestamp_position = (cursorPosition-40.0)/individualUI.returnPPB()*60/sequencer.tempo;
             if (isPlayback) {
-                if (inputs.isAPressed()) {
-                    isMoving = playbackToggle(timestamp_position, individualUI, recordings,
+                isMoving = playbackToggle(timestamp_position, individualUI, recordings,
                                     sequencer.currentTrack);
-                }
             } else {
-                if (inputs.isAPressed()) {
-                    recordToggle(recorder, recordings[sequencer.currentTrack-1],
+                recordToggle(recorder, recordings[sequencer.currentTrack-1],
                                 timestamp_position, individualUI, sequencer, isMoving);
-                }
             }
         }  
 
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(480, 320));
-        ImGui::Begin("MainApp", nullptr,
-                     ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
-                     ImGuiWindowFlags_NoResize     | ImGuiWindowFlags_NoSavedSettings);
 
         if (currentState == SETTINGS) {
             settingsUI.render(sequencer);
@@ -162,35 +189,4 @@ int main(int, char**) {
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
-}
-
-// Return boolean to use for isMoving
-bool playbackToggle(double timestamp_position, IndividualTrackUI& individualUI,
-                    std::vector<MidiRecording>& recordings, int selectedTrack) {
-    // timestamp_position is in seconds, I don't know if you needed input timestamp to be in milli or microseconds so we can do the conversion here
-    // microsecond conversion for example
-    double timestamp_playback = timestamp_position * 1000000.0;
-    // Add compatibility to check if app is already playing back, if so then playback can be stopped and cursor position reset
-    // For now just make the app playback every single track, we'll see if single track playback is complex later
-
-    //individualUI.isMoving = false; // if not playing
-    //individualUI.isMoving = true; // if playing
-
-    return false; // If not playing
-    return true; // If playing
-}
-
-void recordToggle(MidiRecorder& recorder, MidiRecording& recording,
-            double timestamp_pos, IndividualTrackUI& individualUI, Sequencer& seq, bool& isMoving) {
-    if (!isMoving) {
-        if (timestamp_pos <= 0) {
-            // Add recording from timestamp 0 here
-        } else {
-            // Add recording from cursorPosition here 
-        }
-        isMoving = true;
-    } else {
-        // Stop recording here and return recording to 'recording' variable
-        isMoving = false;
-    }
 }
