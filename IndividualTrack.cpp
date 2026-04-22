@@ -28,9 +28,12 @@ void IndividualTrackUI::render(Sequencer& seq, Inputs& inputs, float dt, MidiRec
     // Number of notes per note chunk: 26, for two octaves per chunk
     // note_selection_vert will move selection by half octaves(7 notes), max note_selection_vert = 10
     //drawNotes(recordedNotes, seq);
-    /*for (int i = 0; i < 26; i++) {
-        if (i%2==0) dl->AddRectFilled(ImVec2(-10000, i*ppn), ImVec2(10000, i*ppn+ppn), IM_COL32(90,80,30,255));
-    }*/
+
+    for (int i = 0; i < drawnNotes.size(); i++) {
+        dl->AddRectFilled(drawnNotes[i][0], drawnNotes[i][1], noteCol);
+    }
+
+
     printf("E\n");
     if (!isMoving){
         if (fastMovement) dl->AddRectFilled(ImVec2(0,0),ImVec2(40,280),IM_COL32(180,130,70,255));
@@ -152,9 +155,11 @@ void IndividualTrackUI::handleInputs(Sequencer& seq, Inputs& inputs, float dt, M
 }
 
 void IndividualTrackUI::drawNotes(MidiRecording& recordedNotes, Sequencer& seq) {
-    ImDrawList* dl = ImGui::GetWindowDrawList();
-    ImVec2 p       = ImGui::GetCursorScreenPos();
-    ImVec2 wp      = ImGui::GetWindowPos();
+    //ImDrawList* dl = ImGui::GetWindowDrawList();
+    //ImVec2 p       = ImGui::GetCursorScreenPos();
+    //ImVec2 wp      = ImGui::GetWindowPos();
+
+    drawnNotes.clear();
 
     /*
         Top of notes: 0
@@ -198,8 +203,6 @@ void IndividualTrackUI::drawNotes(MidiRecording& recordedNotes, Sequencer& seq) 
     double t = 1000000.0;
     
     double ttb = static_cast<double>(seq.tempo)/60.0; // timestamp to beats
-    
-    noteCol = IM_COL32(200,200,200,200);
 
     if (isMoving) {
         // Calculate maximum number of segments
@@ -220,7 +223,8 @@ void IndividualTrackUI::drawNotes(MidiRecording& recordedNotes, Sequencer& seq) 
             // Draw note
             y = ((280-ppn) - (note-noteMin)*ppn);
             x_end = 40.0f+segmentOffset+ noteEvent.getTimestamp().count()/t*ttb*ppb;
-            dl->AddRectFilled(ImVec2(x[note-noteMin],y), ImVec2(x_end,y+ppn),noteCol);
+            drawnNotes.push_back({ImVec2(x[note-noteMin],y), ImVec2(x_end,y+ppn)});
+            //dl->AddRectFilled(ImVec2(x[note-noteMin],y), ImVec2(x_end,y+ppn),noteCol);
             x[note-noteMin] = -1.0f;
         }
     }

@@ -56,10 +56,12 @@ class IndividualTrackUI {
         float ppb = 0.0f; // Pixels per beat horizontal
 
         float cursor_increment;
-        ImU32 noteCol = IM_COL32(255,255,255,255);
+        ImU32 noteCol = IM_COL32(200,200,200,255);;
 
         float x_end;
         float y;
+
+        std::vector<std::vector<ImVec2>> drawnNotes;
 
         KeyRepeat upKey, downKey, leftKey, rightKey, fastKey;
         bool fastMovement = false;
