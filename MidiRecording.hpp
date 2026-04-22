@@ -29,7 +29,13 @@ public:
 
     void setInstrument(std::shared_ptr<Instrument> instr) { instrument = instr; }
     void setEvents(const std::vector<TimedMidiMessage>& ev) { events = ev; }
-    void setLength(std::chrono::microseconds len) { length = len; }
+    void setLength(std::chrono::microseconds len) { 
+        if (len >= std::chrono::microseconds(0)) {
+            length = len;
+        } else {
+            std::cerr << "Warning: Attempted to set negative length for MidiRecording. Length must be non-negative." << std::endl;
+        }
+    }
 
 private:
     std::vector<TimedMidiMessage> events;

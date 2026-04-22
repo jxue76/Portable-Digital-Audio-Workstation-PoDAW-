@@ -4,4 +4,6 @@
 class Bass : public Instrument {
 public:
     Bass();
+    Bass(std::string name);
+    ~Bass() override = default;
 };
