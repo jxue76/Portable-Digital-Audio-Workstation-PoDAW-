@@ -14,6 +14,13 @@ set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw)
 
+# Use X11 on Linux
+find_package(OpenGL REQUIRED)
+find_package(X11 REQUIRED)
+set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
+
+
+# 2. Define ImGui Sources
 set(IMGUI_SOURCES
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
@@ -24,6 +31,41 @@ set(IMGUI_SOURCES
     imgui/backends/imgui_impl_opengl3.cpp
 )
 
+# Added stk subdirectory (already configured with a CMakeLists.txt) and audio surce code
+add_subdirectory(stk)
+
+set(AUDIO_CODE_SOURCES
+    Instrument.cpp
+    Piano.cpp
+    Drums.cpp
+    Guitar.cpp
+    Bass.cpp
+    AudioHandler.cpp
+)
+
+set(MIDI_CODE_SOURCES
+    ${AUDIO_CODE_SOURCES}
+    MidiHandler.cpp
+    MidiRecorder.cpp
+    MidiPlayer.cpp
+)
+
+set(STK_INCLUDE_DIRS
+    stk/include
+    stk/rawwaves
+)
+
+# 3. Create Executables
+add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES})
+
+add_executable(STK_Test stk_test.cpp ${AUDIO_CODE_SOURCES})
+
+add_executable(Audio_Live_Test audio_pipeline_test.cpp ${MIDI_CODE_SOURCES})
+
+add_executable(Audio_Recording_Test recording_test.cpp ${MIDI_CODE_SOURCES})
+
+# 4. Include Directories
+target_include_directories(PoDAW_Test PRIVATE 
 set(PODAW_SOURCES
     main.cpp
     Inputs.cpp
@@ -45,8 +87,23 @@ target_include_directories(PoDAW_Test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
+    ${X11_INCLUDE_DIR}
 )
 
+target_include_directories(STK_Test PRIVATE ${STK_INCLUDE_DIRS})
+
+target_include_directories(Audio_Live_Test PRIVATE ${STK_INCLUDE_DIRS})
+
+target_include_directories(Audio_Recording_Test PRIVATE ${STK_INCLUDE_DIRS})
+
+# 5. Link Libraries (glfw now comes from the auto-download)
+target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL ${X11_LIBRARIES})
+
+target_link_libraries(STK_Test PRIVATE stk)
+
+target_link_libraries(Audio_Live_Test PRIVATE stk)
+
+target_link_libraries(Audio_Recording_Test PRIVATE stk)
 target_link_libraries(PoDAW_Test PRIVATE glfw)
 
 if(WIN32)
