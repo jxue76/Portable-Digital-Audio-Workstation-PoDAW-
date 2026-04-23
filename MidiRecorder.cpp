@@ -16,7 +16,7 @@ MidiRecording MidiRecorder::stop() {
     rec.setEvents(events);
 
     if (!events.empty()) {
-        rec.setLength(events.back().getTimestamp());
+        rec.setLength(Clock::now() - startTime);
     }
     
     rec.setInstrument(currentInstrument);
