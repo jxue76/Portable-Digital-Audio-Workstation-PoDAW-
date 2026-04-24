@@ -98,7 +98,7 @@ target_include_directories(PoDAW_Test PRIVATE ${GPIOD_INCLUDE_DIRS})
 target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
 
 
-target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
+target_link_libraries(PoDAW_Test PRIVATE glfw3 OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE stk)
 
 #target_link_libraries(STK_Test PRIVATE stk)
