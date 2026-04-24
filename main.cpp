@@ -1,12 +1,12 @@
 #include "imgui.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_sdlrenderer2.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlrenderer3.h"
 //#include <GLFW/glfw3.h>
 #include <cstdio>
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 #include "Sequencer.hpp"
 #include "SettingsUI.hpp"
@@ -121,20 +121,23 @@ int main(int, char**) {
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);*/
 
-    float main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+SDL_Renderer example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+    float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+    SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL3+SDL_Renderer example", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
         return 1;
     }
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
+    SDL_SetRenderVSync(renderer, 1);
     if (renderer == nullptr)
     {
-        SDL_Log("Error creating SDL_Renderer!");
+        SDL_Log("Error: SDL_CreateRenderer(): %s\n", SDL_GetError());
         return 1;
     }
+    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    SDL_ShowWindow(window);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -151,8 +154,8 @@ int main(int, char**) {
     //ImGui_ImplGlfw_InitForOpenGL(window, true);
     //ImGui_ImplOpenGL3_Init(glsl_version);
 
-    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
-    ImGui_ImplSDLRenderer2_Init(renderer);
+    ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer3_Init(renderer);
 
     Sequencer     sequencer;
     SettingsUI    settingsUI;
@@ -181,13 +184,13 @@ int main(int, char**) {
     while (!done) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            ImGui_ImplSDL2_ProcessEvent(&event);
+            ImGui_ImplSDL3_ProcessEvent(&event);
             if (event.type == SDL_QUIT) done = true;
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
                 done = true;
         }
-        ImGui_ImplSDLRenderer2_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
+        ImGui_ImplSDLRenderer3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -358,7 +361,7 @@ int main(int, char**) {
         SDL_RenderSetScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
         SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
         SDL_RenderClear(renderer);
-        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
     }
 
@@ -367,8 +370,8 @@ int main(int, char**) {
     ImGui::DestroyContext();
     glfwDestroyWindow(window);
     glfwTerminate();*/
-    ImGui_ImplSDLRenderer2_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplSDLRenderer3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 
     SDL_DestroyRenderer(renderer);

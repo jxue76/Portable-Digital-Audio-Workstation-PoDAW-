@@ -5,14 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(FetchContent)
 FetchContent_Declare(
-  SDL2
+  SDL3
   GIT_REPOSITORY "https://github.com/libsdl-org/SDL.git"
   GIT_TAG release-3.0
 )
 #set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
 #set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 #set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(SDL2)
+FetchContent_MakeAvailable(SDL3)
 
 # Use X11 on Linux
 #find_package(OpenGL REQUIRED COMPONENTS EGL GLX GLES2)
@@ -86,4 +86,4 @@ target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
 
 #target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE stk)
-target_link_libraries(PoDAW_Test PRIVATE SDL2)
+target_link_libraries(PoDAW_Test PRIVATE SDL3)
