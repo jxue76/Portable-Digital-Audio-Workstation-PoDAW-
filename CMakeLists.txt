@@ -15,7 +15,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw)
 
 # Use X11 on Linux
-find_package(OpenGL REQUIRED)
+find_package(OpenGL REQUIRED COMPONENTS EGL GLX GLES2)
 find_package(X11 REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GPIOD REQUIRED libgpiodcxx)
@@ -98,7 +98,7 @@ target_include_directories(PoDAW_Test PRIVATE ${GPIOD_INCLUDE_DIRS})
 target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
 
 
-target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL ${X11_LIBRARIES})
+target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE stk)
 
 #target_link_libraries(STK_Test PRIVATE stk)
