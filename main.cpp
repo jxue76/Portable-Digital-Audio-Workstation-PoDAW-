@@ -1,18 +1,19 @@
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include <GLFW/glfw3.h>
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer2.h"
+//#include <GLFW/glfw3.h>
 #include <cstdio>
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <SDL.h>
 
 #include "Sequencer.hpp"
 #include "SettingsUI.hpp"
 #include "SequencerUI.hpp"
 #include "IndividualTrack.hpp"
-#include "KeyboardInputs.hpp"
-#include "GpioInputs.hpp"
+//#include "KeyboardInputs.hpp"
+//#include "GpioInputs.hpp"
 #include "AudioHandler.hpp"
 #include "MidiHandler.hpp"
 #include "MidiPlayer.hpp"
@@ -27,9 +28,9 @@
 
 enum AppState { SEQUENCER, SETTINGS, INDIVIDUAL };
 
-static void glfw_error_callback(int error, const char* description) {
+/*static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
-}
+}*/
 
 // Return boolean to use for isMoving
 /*bool playbackToggle(double timestamp_position, IndividualTrackUI& individualUI,
@@ -105,7 +106,7 @@ int main(int, char**) {
     recordings[1] = recorder.stop();*/
 
 
-    glfwSetErrorCallback(glfw_error_callback);
+    /*glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) return 1;
 
     const char* glsl_version = "#version 130";
@@ -118,7 +119,22 @@ int main(int, char**) {
     GLFWwindow* window = glfwCreateWindow(480, 320, "PoDAW Interface", glfwGetPrimaryMonitor(), nullptr);
     if (!window) return 1;
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(1);*/
+
+    float main_scale = ImGui_ImplSDL2_GetContentScaleForDisplay(0);
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+SDL_Renderer example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+    if (window == nullptr)
+    {
+        printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
+        return 1;
+    }
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (renderer == nullptr)
+    {
+        SDL_Log("Error creating SDL_Renderer!");
+        return 1;
+    }
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -132,8 +148,11 @@ int main(int, char**) {
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.18f, 0.18f, 0.20f, 1.0f);
     style.Colors[ImGuiCol_Header]   = ImVec4(0.30f, 0.50f, 0.55f, 1.0f);
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    //ImGui_ImplGlfw_InitForOpenGL(window, true);
+    //ImGui_ImplOpenGL3_Init(glsl_version);
+
+    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+    ImGui_ImplSDLRenderer2_Init(renderer);
 
     Sequencer     sequencer;
     SettingsUI    settingsUI;
@@ -157,10 +176,18 @@ int main(int, char**) {
     auto current_input_delay = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - input_delay);
     bool input_lock = false;
 
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
+    bool done = false;
+
+    while (!done) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            ImGui_ImplSDL2_ProcessEvent(&event);
+            if (event.type == SDL_QUIT) done = true;
+            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
+                done = true;
+        }
+        ImGui_ImplSDLRenderer2_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -321,19 +348,31 @@ int main(int, char**) {
 
         ImGui::Render();
         int dw, dh;
-        glfwGetFramebufferSize(window, &dw, &dh);
+        /*glfwGetFramebufferSize(window, &dw, &dh);
         glViewport(0, 0, dw, dh);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window);*/
+        SDL_RenderSetScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+        SDL_SetRenderDrawColor(renderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255), (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
+        SDL_RenderClear(renderer);
+        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+        SDL_RenderPresent(renderer);
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
+    /*ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     glfwDestroyWindow(window);
-    glfwTerminate();
+    glfwTerminate();*/
+    ImGui_ImplSDLRenderer2_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
     return 0;
 }

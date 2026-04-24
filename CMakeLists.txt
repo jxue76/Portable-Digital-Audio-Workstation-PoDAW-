@@ -5,21 +5,21 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(FetchContent)
 FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.2
+    SDL2
+    GIT_REPOSITORY "htps//github.com/libsdl-org/SDL.git"
+    GIT_TAG release-2.0.22
 )
-set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(glfw)
+#set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
+#set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
+#set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(SDL2)
 
 # Use X11 on Linux
 find_package(OpenGL REQUIRED COMPONENTS EGL GLX GLES2)
 find_package(X11 REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GPIOD REQUIRED libgpiodcxx)
-set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
+#set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
 
 set(IMGUI_SOURCES
     imgui/imgui.cpp
@@ -33,6 +33,7 @@ set(IMGUI_SOURCES
 
 # Added stk subdirectory (already configured with a CMakeLists.txt) and audio surce code
 add_subdirectory(stk)
+add_subdirectory(sdl)
 
 set(AUDIO_CODE_SOURCES
     Instrument.cpp
