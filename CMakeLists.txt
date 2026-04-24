@@ -17,6 +17,8 @@ FetchContent_MakeAvailable(glfw)
 # Use X11 on Linux
 find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GPIOD REQUIRED libgpiod)
 set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
 
 set(IMGUI_SOURCES
@@ -92,6 +94,8 @@ target_include_directories(PoDAW_Test PRIVATE
 #target_include_directories(Audio_Recording_Test PRIVATE ${STK_INCLUDE_DIRS})
 
 # 5. Link Libraries (glfw now comes from the auto-download)
+target_include_directories(PoDAW_Test PRIVATE ${GPIOD_INCLUDE_DIRS})
+target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL ${X11_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE stk)
 
