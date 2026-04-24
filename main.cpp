@@ -51,6 +51,7 @@ static void glfw_error_callback(int error, const char* description) {
 }*/
 
 int main(int, char**) {
+    std::cout << "RUN" << std::endl;
     // Set MIDI 
     stk::Stk::setRawwavePath("../stk/rawwaves/");
 
