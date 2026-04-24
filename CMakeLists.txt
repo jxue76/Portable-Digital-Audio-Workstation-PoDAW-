@@ -19,8 +19,6 @@ find_package(OpenGL REQUIRED)
 find_package(X11 REQUIRED)
 set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
 
-
-# 2. Define ImGui Sources
 set(IMGUI_SOURCES
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
@@ -55,22 +53,13 @@ set(STK_INCLUDE_DIRS
     stk/rawwaves
 )
 
-# 3. Create Executables
-add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES})
-
-add_executable(STK_Test stk_test.cpp ${AUDIO_CODE_SOURCES})
-
-add_executable(Audio_Live_Test audio_pipeline_test.cpp ${MIDI_CODE_SOURCES})
-
-add_executable(Audio_Recording_Test recording_test.cpp ${MIDI_CODE_SOURCES})
-
-# 4. Include Directories
 set(PODAW_SOURCES
     main.cpp
     Inputs.cpp
     Sequencer.cpp
     SettingsUI.cpp
     SequencerUI.cpp
+    IndividualTrack.cpp
 )
 
 # Platform-specific input backend
@@ -80,37 +69,49 @@ else()
     list(APPEND PODAW_SOURCES KeyboardInputs.cpp)
 endif()
 
-add_executable(PoDAW_Test ${PODAW_SOURCES} ${IMGUI_SOURCES})
+# 3. Create Executables
+add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES} ${PODAW_SOURCES} ${MIDI_CODE_SOURCES})
+
+#add_executable(STK_Test stk_test.cpp ${AUDIO_CODE_SOURCES})
+
+#add_executable(Audio_Live_Test audio_pipeline_test.cpp ${MIDI_CODE_SOURCES})
+
+#add_executable(Audio_Recording_Test recording_test.cpp ${MIDI_CODE_SOURCES})
+
+#add_executable(PoDAW_Test ${PODAW_SOURCES} ${IMGUI_SOURCES})
 
 target_include_directories(PoDAW_Test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
     ${X11_INCLUDE_DIR}
+    ${STK_INCLUDE_DIRS}
+    #${AUDIO_CODE_SOURCES}
+    #${MIDI_CODE_SOURCES}
 )
 
-target_include_directories(STK_Test PRIVATE ${STK_INCLUDE_DIRS})
+#target_include_directories(STK_Test PRIVATE ${STK_INCLUDE_DIRS})
 
-target_include_directories(Audio_Live_Test PRIVATE ${STK_INCLUDE_DIRS})
+#target_include_directories(Audio_Live_Test PRIVATE ${STK_INCLUDE_DIRS})
 
-target_include_directories(Audio_Recording_Test PRIVATE ${STK_INCLUDE_DIRS})
+#target_include_directories(Audio_Recording_Test PRIVATE ${STK_INCLUDE_DIRS})
 
 # 5. Link Libraries (glfw now comes from the auto-download)
 target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL ${X11_LIBRARIES})
+target_link_libraries(PoDAW_Test PRIVATE stk)
 
-target_link_libraries(STK_Test PRIVATE stk)
+#target_link_libraries(STK_Test PRIVATE stk)
 
-target_link_libraries(Audio_Live_Test PRIVATE stk)
+#target_link_libraries(Audio_Live_Test PRIVATE stk)
 
-target_link_libraries(Audio_Recording_Test PRIVATE stk)
-target_link_libraries(PoDAW_Test PRIVATE glfw)
+#target_link_libraries(Audio_Recording_Test PRIVATE stk)
 
-if(WIN32)
-    target_link_libraries(PoDAW_Test PRIVATE opengl32 gdi32)
-elseif(UNIX)
-    find_package(OpenGL REQUIRED)
-    target_link_libraries(PoDAW_Test PRIVATE OpenGL::GL)
-    if(PODAW_USE_GPIO)
-        target_link_libraries(PoDAW_Test PRIVATE gpiodcxx)
-    endif()
-endif()
+#if(WIN32)
+#    target_link_libraries(PoDAW_Test PRIVATE opengl32 gdi32)
+#elseif(UNIX)
+#    find_package(OpenGL REQUIRED)
+#    target_link_libraries(PoDAW_Test PRIVATE OpenGL::GL)
+#    if(PODAW_USE_GPIO)
+#        target_link_libraries(PoDAW_Test PRIVATE gpiodcxx)
+#    endif()
+#endif()

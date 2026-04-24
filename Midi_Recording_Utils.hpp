@@ -68,7 +68,7 @@ namespace MidiUtils {
             }
         }
         sortRecording(recording);
-        return recording;
+        //return recording;
     }
     
     // In-place concatenation of two recordings, appending the source recording to the end of the destination recording, and modifying the timestamps of the source events to be relative to the end of the destination recording
@@ -89,7 +89,7 @@ namespace MidiUtils {
         for (const auto& event : sourceEvents) {
             if (event.getTimestamp() >= startTime && event.getTimestamp() <= endTime) {
                 destination.getEvents().emplace_back(event, event.getTimestamp() - startTime);
-            
+            }
         }
         destination.setLength(endTime - startTime);
         return destination;

@@ -16,7 +16,8 @@ MidiRecording MidiRecorder::stop() {
     rec.setEvents(events);
 
     if (!events.empty()) {
-        rec.setLength(Clock::now() - startTime);
+        auto newLength = std::chrono::duration_cast<std::chrono::microseconds>(Clock::now() - startTime);
+        rec.setLength(newLength);
     }
     
     rec.setInstrument(currentInstrument);
