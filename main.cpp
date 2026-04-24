@@ -12,6 +12,7 @@
 #include "SequencerUI.hpp"
 #include "IndividualTrack.hpp"
 #include "KeyboardInputs.hpp"
+#include "GpioInputs.hpp"
 #include "AudioHandler.hpp"
 #include "MidiHandler.hpp"
 #include "MidiPlayer.hpp"
@@ -49,23 +50,8 @@ static void glfw_error_callback(int error, const char* description) {
     return true; // If playing
 }*/
 
-void recordToggle(MidiRecorder& recorder, MidiRecording& recording,
-            double timestamp_pos, IndividualTrackUI& individualUI, Sequencer& seq, bool& isMoving) {
-    if (!isMoving) {
-        recorder.start();
-        if (timestamp_pos <= 0) {
-            // Add recording from timestamp 0 here
-            //recorder.start();
-        } else {
-            // Add recording from cursorPosition here 
+void recordingThreadFunction() {
 
-        }
-        isMoving = true;
-    } else {
-        // Stop recording here and return recording to 'recording' variable
-        recording = recorder.stop();
-        isMoving = false;
-    }
 }
 
 int main(int, char**) {
@@ -92,9 +78,13 @@ int main(int, char**) {
 
     //MidiRecording track1Recording, track2Recording, track3Recording, track4Recording;
     std::vector<MidiRecording> recordings(4);
-    recorder.setInstrument(piano);
+    recordings[0].setInstrument(piano);
+    recordings[1].setInstrument(guitar);
+    recordings[2].setInstrument(drums);
+    recordings[3].setInstrument(bass);
+    /*recorder.setInstrument(guitar);
 
-    /*std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
+    std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
         { std::chrono::milliseconds(1000), MidiMessage(Note(60, 1.0f), true) },
         { std::chrono::milliseconds(3000), MidiMessage(Note(60, 1.0f), false) },
         { std::chrono::milliseconds(5000), MidiMessage(Note(64, 1.0f), true) },
@@ -116,7 +106,7 @@ int main(int, char**) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    recordings[0] = recorder.stop();*/
+    recordings[1] = recorder.stop();*/
 
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -150,7 +140,8 @@ int main(int, char**) {
     SettingsUI    settingsUI;
     SequencerUI   sequencerUI;
     IndividualTrackUI individualUI;
-    KeyboardInputs inputs(window);
+    GpioInputs inputs(window);
+    //KeyboardInputs inputs(window);
 
     AppState currentState = SETTINGS;
 
@@ -186,7 +177,7 @@ int main(int, char**) {
         // Input lock code
         if (input_lock) {
             current_input_delay = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - input_delay);
-            if (current_input_delay.count() > 0.1) {
+            if (current_input_delay.count() > 0.01) {
                 input_lock = false;
             }
         }
@@ -240,14 +231,38 @@ int main(int, char**) {
                     default:
                         recorder.setInstrument(piano);
                 }
-                recordToggle(recorder, recordings[sequencer.currentTrack-1],
-                                timestamp_position, individualUI, sequencer, isMoving);
+                //recordToggle(recorder, recordings[sequencer.currentTrack-1],timestamp_position, individualUI, sequencer, isMoving);
+                if (isMoving) {
+                    recordings[sequencer.currentTrack-1] = recorder.stop();
+                    isMoving = false;
+                } else {
+                    individualUI.setCursor(40.0f);
+                    recorder.start();
+                    isMoving = true;
+                }
             }
             input_delay = std::chrono::high_resolution_clock::now();
             input_lock = true;
         }  
 
-        if (!midiPlayerPiano.isPlaying() && !midiPlayerGuitar.isPlaying() && !midiPlayerDrums.isPlaying() && !midiPlayerBass.isPlaying()) isMoving = false;
+        // Recording loop
+        if (!isPlayback && isMoving) {
+            if (midiHandler.hasMessages() && !input_lock) {
+                MidiMessage msg = midiHandler.popMessage();
+                std::cout << "Received MIDI message: Note " << msg.getNote().getMidiNote() 
+                        << (msg.isOn() ? " ON" : " OFF") << std::endl;
+                recorder.process(msg);
+                input_lock = true;
+                input_delay = std::chrono::high_resolution_clock::now();
+            }
+            //std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+
+        if (isPlayback &&
+            !midiPlayerPiano.isPlaying() &&
+            !midiPlayerGuitar.isPlaying() &&
+            !midiPlayerDrums.isPlaying() &&
+            !midiPlayerBass.isPlaying()) isMoving = false;
 
         if (currentState == SETTINGS) {
             settingsUI.render(sequencer);

@@ -47,13 +47,15 @@ void MidiPlayer::playbackThreadFunc(MidiRecording recording, bool loop = false, 
         for (const auto& ev : recording.getEvents()) {
             if (!playing) return;
 
-            auto target = start + ev.getTimestamp();
-            std::this_thread::sleep_until(target);
+            auto target = start + ev.getTimestamp() - startOffset;
+            if (ev.getTimestamp().count() >= startOffset.count()) {
+                std::this_thread::sleep_until(target);
 
-            if (ev.isOn()) {
-                audio.addNoteToInstrument(recording.getInstrument(), ev.getNote());
-            } else {
-                audio.removeNoteFromInstrument(recording.getInstrument(), ev.getNote());
+                if (ev.isOn()) {
+                    audio.addNoteToInstrument(recording.getInstrument(), ev.getNote());
+                } else {
+                    audio.removeNoteFromInstrument(recording.getInstrument(), ev.getNote());
+                }
             }
         }
 

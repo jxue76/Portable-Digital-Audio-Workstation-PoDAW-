@@ -39,12 +39,14 @@ void IndividualTrackUI::render(Sequencer& seq, Inputs& inputs, float dt, MidiRec
         else if (!fastMovement) dl->AddRectFilled(ImVec2(0,0), ImVec2(40, 280), IM_COL32(70, 130, 180, 255));}
     else if (isMoving) {
         dl->AddRectFilled(ImVec2(0,0),ImVec2(40,280),IM_COL32(100,100,100,255));}
-    char track_num[16];
+    char track_num[32];
     snprintf(track_num, sizeof(track_num), "%d", seq.currentTrack);
     dl->AddText(ImVec2(10, 20), IM_COL32(255,255,255,255), track_num);
     // Next is track instrument
-    if (recordedNotes.getInstrument()) snprintf(track_num, sizeof(track_num), "%s", recordedNotes.getInstrument().get()->getName());
-    else snprintf(track_num, sizeof(track_num), "%s", "PNO");
+    if (recordedNotes.getInstrument()) {
+        snprintf(track_num, sizeof(track_num), "%s", (recordedNotes.getInstrument().get()->getName()).c_str());
+    }
+    else snprintf(track_num, sizeof(track_num), "%s", "NUL");
     dl->AddText(ImVec2(10,30), IM_COL32(255,255,255,255), track_num);
     if (playback) {
         snprintf(track_num, sizeof(track_num), "PLAY");

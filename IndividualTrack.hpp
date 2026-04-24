@@ -13,6 +13,7 @@ class IndividualTrackUI {
         float returnPPB() {return ppb;}
         void drawNotes(MidiRecording& recordedNotes, Sequencer& seq);
         void pushCursorPlayback(Sequencer& seq, double dt, MidiRecording& recordedNotes);
+        void setCursor(float newCursor) {cursor_pos = newCursor;}
         
         bool playback = true;
         bool isMoving = false;
