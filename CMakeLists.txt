@@ -27,15 +27,15 @@ set(IMGUI_SOURCES
     imgui/imgui_draw.cpp
     imgui/imgui_tables.cpp
     imgui/imgui_widgets.cpp
-    imgui/backends/imgui_impl_sdl.h
-    imgui/backends/imgui_impl_sdl.cpp
-    imgui/backends/imgui_impl_sdlrenderer.h
-    imgui/backends/imgui_impl_sdlrenderer.cpp
+    imgui/backends/imgui_impl_sdl2.h
+    imgui/backends/imgui_impl_sdl2.cpp
+    imgui/backends/imgui_impl_sdlrenderer2.h
+    imgui/backends/imgui_impl_sdlrenderer2.cpp
 )
 
 # Added stk subdirectory (already configured with a CMakeLists.txt) and audio surce code
 add_subdirectory(stk)
-add_subdirectory(sdl)
+#add_subdirectory(sdl)
 
 set(AUDIO_CODE_SOURCES
     Instrument.cpp
@@ -103,7 +103,7 @@ target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
 
 #target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE stk)
-target_link_libraries(PoDAW_Test PRIVATE sdl SDL2::SDL2)
+target_link_libraries(PoDAW_Test PRIVATE SDL2)
 
 #target_link_libraries(STK_Test PRIVATE stk)
 
