@@ -65,7 +65,6 @@ add_executable(Audio_Live_Test audio_pipeline_test.cpp ${MIDI_CODE_SOURCES})
 add_executable(Audio_Recording_Test recording_test.cpp ${MIDI_CODE_SOURCES})
 
 # 4. Include Directories
-target_include_directories(PoDAW_Test PRIVATE 
 set(PODAW_SOURCES
     main.cpp
     Inputs.cpp
