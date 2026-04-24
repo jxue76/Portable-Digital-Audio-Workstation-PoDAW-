@@ -12,7 +12,7 @@ FetchContent_Declare(
 #set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
 #set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 #set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-#FetchContent_MakeAvailable(SDL2)
+FetchContent_MakeAvailable(SDL2)
 
 # Use X11 on Linux
 find_package(OpenGL REQUIRED COMPONENTS EGL GLX GLES2)
@@ -27,8 +27,10 @@ set(IMGUI_SOURCES
     imgui/imgui_draw.cpp
     imgui/imgui_tables.cpp
     imgui/imgui_widgets.cpp
-    imgui/backends/imgui_impl_glfw.cpp
-    imgui/backends/imgui_impl_opengl3.cpp
+    imgui/backends/imgui_impl_sdl.h
+    imgui/backends/imgui_impl_sdl.cpp
+    imgui/backends/imgui_impl_sdlrenderer.h
+    imgui/backends/imgui_impl_sdlrenderer.cpp
 )
 
 # Added stk subdirectory (already configured with a CMakeLists.txt) and audio surce code
@@ -101,7 +103,7 @@ target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
 
 #target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
 target_link_libraries(PoDAW_Test PRIVATE stk)
-target_link_libraries(PoDAW_Test PRIVATE sdl)
+target_link_libraries(PoDAW_Test PRIVATE sdl SDL2::SDL2)
 
 #target_link_libraries(STK_Test PRIVATE stk)
 
