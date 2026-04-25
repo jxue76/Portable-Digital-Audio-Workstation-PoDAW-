@@ -121,7 +121,6 @@ int main(int, char**) {
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     glfwSetWindowAttrib(window, GLFW_RESIZABLE, true);
-    glfwMaximizeWindow(window);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -364,7 +363,7 @@ int main(int, char**) {
         ImGui::Render();
         int dw, dh;
         glfwGetFramebufferSize(window, &dw, &dh);
-        glViewport(40, 40, 900, 400);
+        glViewport(100, 100, 1500, 400);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
