@@ -369,8 +369,6 @@ int main(int, char**) {
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        ImGui::size
-
         glfwSwapBuffers(window);
     }
 
