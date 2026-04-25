@@ -12,8 +12,8 @@ This file defines the GpioInputs class, which implements the Inputs interface to
 #define PINA 17
 #define PINB 27
 #define PINX 22
-#define PINDIALCLK 23
-#define PINDIALDT 25
+#define PINDIALCLK 25
+#define PINDIALDT 23
 #define PINUP 9
 #define PINDOWN 11
 #define PINLEFT 8
