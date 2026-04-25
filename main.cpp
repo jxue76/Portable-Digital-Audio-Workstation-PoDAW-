@@ -132,6 +132,7 @@ int main(int, char**) {
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0.0f;
+    style.ScaleAllSizes(2.0f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.18f, 0.18f, 0.20f, 1.0f);
     style.Colors[ImGuiCol_Header]   = ImVec4(0.30f, 0.50f, 0.55f, 1.0f);
 
@@ -366,7 +367,6 @@ int main(int, char**) {
         glViewport(0, 0, dw, dh);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        ImGui::GetDrawData()->DisplaySize(ImVec2(100,100));
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSetWindowSize(window, 900, 400);
