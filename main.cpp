@@ -165,6 +165,7 @@ int main(int, char**) {
 
     //std::cout << "start of render" <<std::endl;
     bool input = false;
+    float currentVol = 1.0f;
 
     while (true) {
         glfwPollEvents();
@@ -220,7 +221,8 @@ int main(int, char**) {
         }
 
         if (inputs.getDialPosition() == Dial::UP && !input_lock) {
-            if (piano->getVolume() < 1.0f) {
+            currentVol = piano->getVolume();
+            if (currentVol < 1.0f) {
                 piano->setVolume((piano->getVolume()) + 0.02f);
                 guitar->setVolume((guitar->getVolume()) + 0.02f);
                 drums->setVolume((drums->getVolume()) + 0.02f);
@@ -229,7 +231,8 @@ int main(int, char**) {
             //input_delay = std::chrono::high_resolution_clock::now();
             //input_lock = true;
         } else if (inputs.getDialPosition() == Dial::DOWN && !input_lock) {
-            if (piano->getVolume() > 0.0f) {
+            currentVol = piano->getVolume();
+            if (currentVol > 0.0f) {
                 piano->setVolume((piano->getVolume()) - 0.02f);
                 guitar->setVolume((guitar->getVolume()) - 0.02f);
                 drums->setVolume((drums->getVolume()) - 0.02f);
