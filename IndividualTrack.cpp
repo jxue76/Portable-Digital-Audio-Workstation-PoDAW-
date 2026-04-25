@@ -67,7 +67,7 @@ void IndividualTrackUI::render(Sequencer& seq, Inputs& inputs, float dt, MidiRec
                             ImVec2(p.x+cursor_pos+20, p.y+480),
                             IM_COL32(90,80,30,200));
 
-    float segmentLength = 480/max_segments;
+    float segmentLength = 480/(max_segments-1);
     if (!isMoving) dl->AddRectFilled(ImVec2(p.x+0,p.y+420), ImVec2(p.x+720,p.y+480), IM_COL32(60,60,60,255));
     if (isMoving) {
         if (playback) dl->AddRectFilled(ImVec2(p.x+0,p.y+420), ImVec2(p.x+720,p.y+480), IM_COL32(30,30,180,255));
@@ -99,21 +99,21 @@ void IndividualTrackUI::handleInputs(Sequencer& seq, Inputs& inputs, float dt, M
             if (leftKey.check(inputs.isLeftPressed(), dt)) {
                 cursor_pos -= cursor_increment;
                 drawNotes(recordedNotes, seq);
-                if (cursor_pos <= 60) {
+                if (cursor_pos < 60) {
                     if (current_segment <= 0) {
                         cursor_pos = 60;
                     } else {
                         current_segment -= 1;
-                        cursor_pos = 720;
+                        cursor_pos = 720 - cursor_increment;
                     }
                 }
             }
             if (rightKey.check(inputs.isRightPressed(), dt)) {
                 cursor_pos += cursor_increment;
                 drawNotes(recordedNotes, seq);
-                if (cursor_pos >= 720) {
+                if (cursor_pos > 720 - cursor_increment) {
                     if (current_segment >= max_segments-1) {
-                        cursor_pos = 720;
+                        cursor_pos = 720 - cursor_increment;
                     } else {
                         current_segment += 1;
                         cursor_pos = 60;
