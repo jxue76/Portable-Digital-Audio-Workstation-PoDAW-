@@ -132,7 +132,6 @@ int main(int, char**) {
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0.0f;
-    style.ScaleAllSizes(2.0f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.18f, 0.18f, 0.20f, 1.0f);
     style.Colors[ImGuiCol_Header]   = ImVec4(0.30f, 0.50f, 0.55f, 1.0f);
 
@@ -360,6 +359,8 @@ int main(int, char**) {
         //std::cout << "End of render" << std::endl;
 
         ImGui::End();
+
+        style.ScaleAllSizes(2.0f);
 
         ImGui::Render();
         int dw, dh;
