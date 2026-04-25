@@ -219,7 +219,7 @@ int main(int, char**) {
             }
         }
 
-        std::cout << str(inputs.getDialPosition() == Dial::UP) << std::endl;
+        std::cout << inputs.getDialPosition() == Dial::UP << std::endl;
 
         if (inputs.getDialPosition() == Dial::UP && !input_lock) {
             if (piano->getVolume() < 1.0f) {
