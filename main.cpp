@@ -219,7 +219,7 @@ int main(int, char**) {
             }
         }
 
-        bool vog = inputs.getDialPosition() == Dial::UP;
+        bool vog = inputs.getDialPosition() == Dial::UP || inputs.getDialPosition() == Dial::DOWN;
         std::cout << vog << std::endl;
 
         if (inputs.getDialPosition() == Dial::UP && !input_lock) {
