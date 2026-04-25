@@ -80,7 +80,7 @@ int main(int, char**) {
     recordings[2].setInstrument(drums);
     recordings[3].setInstrument(bass);
 
-    recorder.setInstrument(guitar);
+    /*recorder.setInstrument(guitar);
 
     std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
         { std::chrono::milliseconds(1000), MidiMessage(Note(60, 1.0f), true) },
@@ -104,7 +104,7 @@ int main(int, char**) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    recordings[1] = recorder.stop();
+    recordings[1] = recorder.stop();*/
 
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -127,7 +127,7 @@ int main(int, char**) {
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-    io.FontGlobalScale = 2;
+    //io.FontGlobalScale = 1;
 
     ImGui::StyleColorsDark();
     ImGuiStyle& style = ImGui::GetStyle();
@@ -172,7 +172,7 @@ int main(int, char**) {
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(960, 640));
+        ImGui::SetNextWindowSize(ImVec2(480, 320));
         ImGui::Begin("MainApp", nullptr,
                      ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_NoResize     | ImGuiWindowFlags_NoSavedSettings);
@@ -368,6 +368,8 @@ int main(int, char**) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        glfwSetWindowSize(900, 400);
 
         glfwSwapBuffers(window);
     }
