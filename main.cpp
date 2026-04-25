@@ -172,7 +172,7 @@ int main(int, char**) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos(ImVec2(50, 0));
+        ImGui::SetNextWindowPos(ImVec2(90, 0));
         ImGui::SetNextWindowSize(ImVec2(720, 480));
         ImGui::Begin("MainApp", nullptr,
                      ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
