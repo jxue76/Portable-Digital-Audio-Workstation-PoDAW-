@@ -16,8 +16,8 @@ FetchContent_MakeAvailable(glfw)
 
 # Use X11 on Linux
 find_package(OpenGL REQUIRED COMPONENTS EGL GLX GLES2)
-find_package(X11 REQUIRED)
-set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
+#find_package(X11 REQUIRED)
+#set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
 set(GLFW_USE_EGL ON CACHE BOOL "" FORCE)
 set(GLFW_USE_GLESV2 ON CACHE BOOL "" FORCE)
 find_package(PkgConfig REQUIRED)
