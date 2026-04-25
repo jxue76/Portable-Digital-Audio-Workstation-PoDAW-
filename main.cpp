@@ -173,8 +173,6 @@ int main(int, char**) {
         ImGui::Begin("MainApp", nullptr,
                      ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_NoResize     | ImGuiWindowFlags_NoSavedSettings);
-
-        std::cout << "Begin rendering" << std::endl;
         
         // isPlayback is true if playback option is chosen, false is recording option is chosen
         if (sequencer.currentMode == 0 && !isPlayback) {isPlayback=true; individualUI.playback = true;}
@@ -329,17 +327,22 @@ int main(int, char**) {
         ImGui::End();
 
         ImGui::Render();
+        std::cout << "Render" << std::endl;
         int dw, dh;
         glfwGetFramebufferSize(window, &dw, &dh);
+        std::cout << "Frame Buffer" << std::endl;
         glViewport(0, 0, dw, dh);
+        std::cout << "Viewport" << std::endl;
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        std::cout << "Clear color" << std::endl;
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        std::cout << "Get Draw data" << std::endl;
 
         glfwSwapBuffers(window);
     }
 
-    std::cout << "THe end " << std::endl;
+    std::cout << "The end " << std::endl;
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
