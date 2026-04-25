@@ -45,7 +45,7 @@ class IndividualTrackUI {
             }
         };
         
-        float cursor_pos = 40;
+        float cursor_pos = 60.0f;
         
         int current_segment = 0;
         int max_segments = 4;
