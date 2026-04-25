@@ -312,7 +312,7 @@ int main(int, char**) {
 
         // Recording loop
         if (!isPlayback && isMoving) {
-            if (midiHandler.hasMessages() && !input_lock) {
+            if (midiHandler.hasMessages()) {
                 MidiMessage msg = midiHandler.popMessage();
                 std::cout << "Received MIDI message: Note " << msg.getNote().getMidiNote() 
                         << (msg.isOn() ? " ON" : " OFF") << std::endl;
