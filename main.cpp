@@ -120,7 +120,7 @@ int main(int, char**) {
     if (!window) return 1;
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-    glfwSetWindowAttrib(window, GLFW_RESIZABLE, true);
+    glfwSetWindowAttrib(window, GLFW_RESIZABLE, GLFW_TRUE);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -360,15 +360,15 @@ int main(int, char**) {
 
         ImGui::End();
 
-        style.ScaleAllSizes(1.1f);
+        //style.ScaleAllSizes(1.1f);
         
         ImGui::Render();
         int dw, dh;
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwGetFramebufferSize(window, &dw, &dh);
-        glViewport(0, 0, dw, dh);
+        glViewport(0, 0, dw*1.1, dh*1.1);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         //glfwSetWindowSize(window, 900, 400);
 
