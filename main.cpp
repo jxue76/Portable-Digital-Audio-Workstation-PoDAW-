@@ -360,7 +360,7 @@ int main(int, char**) {
 
         ImGui::End();
 
-        style.ScaleAllSizes(2.0f);
+        style.ScaleAllSizes(0.8f);
 
         ImGui::Render();
         int dw, dh;
