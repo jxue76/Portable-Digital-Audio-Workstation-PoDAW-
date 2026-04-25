@@ -174,7 +174,7 @@ int main(int, char**) {
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(480, 320));
         ImGui::Begin("MainApp", nullptr,
-                     ImGuiWindowFlags_AlwaysAutoResize);
+                     ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
 
         // isPlayback is true if playback option is chosen, false is recording option is chosen
         if (sequencer.currentMode == 0 && !isPlayback) {isPlayback=true; individualUI.playback = true;}
@@ -366,6 +366,7 @@ int main(int, char**) {
         glViewport(0, 0, dw, dh);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        ImGui::GetDrawData()->DisplaySize(ImVec2(100,100));
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSetWindowSize(window, 900, 400);
