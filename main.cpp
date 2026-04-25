@@ -170,8 +170,8 @@ int main(int, char**) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(480, 320));
+        ImGui::SetNextWindowPos(ImVec2(40, 40));
+        ImGui::SetNextWindowSize(ImVec2(960, 640));
         ImGui::Begin("MainApp", nullptr,
                      ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_NoResize     | ImGuiWindowFlags_NoSavedSettings);
@@ -363,7 +363,7 @@ int main(int, char**) {
         ImGui::Render();
         int dw, dh;
         glfwGetFramebufferSize(window, &dw, &dh);
-        glViewport(100, 100, 1500, 400);
+        glViewport(0, 0, dw, dh);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
