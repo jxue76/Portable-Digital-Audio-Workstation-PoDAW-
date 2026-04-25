@@ -221,22 +221,22 @@ int main(int, char**) {
 
         if (inputs.getDialPosition() == Dial::UP && !input_lock) {
             if (piano->getVolume() < 1.0f) {
-                piano->setVolume(piano->getVolume() + 0.02f);
-                guitar->setVolume(guitar->getVolume() + 0.02f);
-                drums->setVolume(drums->getVolume() + 0.02f);
-                bass->setVolume(bass->getVolume() + 0.02f);
+                piano->setVolume((piano->getVolume()) + 0.02f);
+                guitar->setVolume((guitar->getVolume()) + 0.02f);
+                drums->setVolume((drums->getVolume()) + 0.02f);
+                bass->setVolume((bass->getVolume()) + 0.02f);
             }
-            std::cout << piano->getVolume() << std::endl;
+            std::cout << piano->getVolume() - 0.02f << std::endl;
             //input_delay = std::chrono::high_resolution_clock::now();
             //input_lock = true;
         } else if (inputs.getDialPosition() == Dial::DOWN && !input_lock) {
             if (piano->getVolume() > 0.0f) {
-                piano->setVolume(piano->getVolume() - 0.02f);
-                guitar->setVolume(guitar->getVolume() - 0.02f);
-                drums->setVolume(drums->getVolume() - 0.02f);
-                bass->setVolume(bass->getVolume() - 0.02f);
+                piano->setVolume((piano->getVolume()) - 0.02f);
+                guitar->setVolume((guitar->getVolume()) - 0.02f);
+                drums->setVolume((drums->getVolume()) - 0.02f);
+                bass->setVolume((bass->getVolume()) - 0.02f);
             }
-            std::cout << piano->getVolume() << std::endl;
+            std::cout << piano->getVolume() - 0.02f << std::endl;
             //input_delay = std::chrono::high_resolution_clock::now();
             //input_lock = true;
         }
