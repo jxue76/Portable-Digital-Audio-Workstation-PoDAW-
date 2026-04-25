@@ -190,23 +190,23 @@ int main(int, char**) {
         }
 
         if (currentState == SETTINGS && !input_lock) {
-            if (inputs.IsAPressed()) {
+            if (inputs.isAPressed()) {
                 io.AddKeyEvent(ImGuiKey_Enter, true);
                 io.AddKeyEvent(ImGuiKey_Enter, false);
                 input = true;
-            } else if (inputs.IsUpPressed()) {
+            } else if (inputs.isUpPressed()) {
                 io.AddKeyEvent(ImGuiKey_UpArrow, true);
                 io.AddKeyEvent(ImGuiKey_UpArrow, false);
                 input = true;
-            } else if (inputs.IsDownPressed()) {
+            } else if (inputs.isDownPressed()) {
                 io.AddKeyEvent(ImGuiKey_DownArrow, true);
                 io.AddKeyEvent(ImGuiKey_DownArrow, false);
                 input = true;
-            } else if (inputs.IsLeftPressed()) {
+            } else if (inputs.isLeftPressed()) {
                 io.AddKeyEvent(ImGuiKey_LeftArrow, true);
                 io.AddKeyEvent(ImGuiKey_LeftArrow, false);
                 input = true;
-            } else if (inputs.IsRightPressed()) {
+            } else if (inputs.isRightPressed()) {
                 io.AddKeyEvent(ImGuiKey_RightArrow, true);
                 io.AddKeyEvent(ImGuiKey_RightArrow, false);
                 input = true;
