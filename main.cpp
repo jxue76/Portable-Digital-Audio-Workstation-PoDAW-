@@ -172,8 +172,9 @@ int main(int, char**) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::SetNextWindowPos(ImVec2(90, 0));
+        ImGui::SetNextWindowPos(ImVec2(30, 0));
         ImGui::SetNextWindowSize(ImVec2(720, 480));
+        ImGui::SetCursorPos(ImVec2(30,0));
         ImGui::Begin("MainApp", nullptr,
                      ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings);
 
@@ -235,7 +236,7 @@ int main(int, char**) {
         // Playback/Record button is A for individual track viewer,
         // for individual track viewer B will toggle between fast movement
         if (currentState == INDIVIDUAL && inputs.isAPressed() && !input_lock){
-            double timestamp_position = (cursorPosition-40.0)/individualUI.returnPPB()*60/sequencer.tempo;
+            double timestamp_position = (cursorPosition-60.0)/individualUI.returnPPB()*60/sequencer.tempo;
             // seconds
             
             if (isPlayback) {
@@ -275,7 +276,7 @@ int main(int, char**) {
                     recordings[sequencer.currentTrack-1] = recorder.stop();
                     isMoving = false;
                 } else {
-                    individualUI.setCursor(40.0f);
+                    individualUI.setCursor(60.0f);
                     recorder.start();
                     isMoving = true;
                 }
