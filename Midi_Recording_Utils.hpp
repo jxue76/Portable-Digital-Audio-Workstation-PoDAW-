@@ -1,3 +1,4 @@
+#pragma once
 #include "MidiRecording.hpp"
 #include "MidiMessage.hpp"
 #include "Instrument.hpp"
