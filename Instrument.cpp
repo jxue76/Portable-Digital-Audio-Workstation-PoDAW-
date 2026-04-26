@@ -28,7 +28,7 @@ void Instrument::noteOn(const Note& note) {
 
     stk::StkFloat noteNumber = static_cast<stk::StkFloat>(note.getMidiNote());
     stk::StkFloat amplitude = note.getAmplitude() * volume * 128.0f;
-    voicer->noteOn(noteNumber-5.0, amplitude);
+    voicer->noteOn(noteNumber-1.0, amplitude);
 }
 
 void Instrument::noteOff(const Note& note) {
@@ -38,7 +38,7 @@ void Instrument::noteOff(const Note& note) {
 
     stk::StkFloat noteNumber = static_cast<stk::StkFloat>(note.getMidiNote());
     stk::StkFloat amplitude = note.getAmplitude() * volume * 128.0f;
-    voicer->noteOff(noteNumber-5.0, amplitude);
+    voicer->noteOff(noteNumber-1.0, amplitude);
 }
 
 stk::StkFloat Instrument::tick() {
