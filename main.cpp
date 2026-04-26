@@ -277,7 +277,7 @@ int main(int, char**) {
         if (inputs.isXPressed() && !isMoving && !input_lock) {
             if (currentState == SETTINGS) {
                 currentState = INDIVIDUAL;
-                individualUI.drawNotes(recordings, sequencer);
+                individualUI.drawNotes(recordings[sequencer.currentTrack-1], sequencer);
             } else {
                 currentState = SETTINGS;
             }
@@ -332,7 +332,7 @@ int main(int, char**) {
                     midiPlayerDrums.stop();
                     midiPlayerBass.stop();
                     audioHandler.removeAllNotes();
-                    individualUI.drawNotes(recordings, sequencer);
+                    individualUI.drawNotes(recordings[sequencer.currentTrack-1], sequencer);
                     isMoving = false;
                 } else {
                     if (sequencer.currentTrack != 1) midiPlayerPiano.play(recordings[0],false, 0.0);
