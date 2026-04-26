@@ -1,5 +1,6 @@
 #include "MidiRecording.hpp"
 #include "MidiRecorder.hpp"
+#include "Midi_Recording_Utils.hpp"
 
 void MidiRecorder::start() {
     std::lock_guard<std::mutex> lock(mtx);

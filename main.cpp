@@ -80,7 +80,7 @@ int main(int, char**) {
     recordings[2].setInstrument(drums);
     recordings[3].setInstrument(bass);
 
-    /*recorder.setInstrument(guitar);
+    recorder.setInstrument(piano);
 
     std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
         { std::chrono::milliseconds(1000), MidiMessage(Note(60, 1.0f), true) },
@@ -104,7 +104,33 @@ int main(int, char**) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    recordings[1] = recorder.stop();*/
+    recordings[0] = recorder.stop();
+
+    recorder.setInstrument(guitar);
+
+    std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
+        { std::chrono::milliseconds(1000), MidiMessage(Note(60, 1.0f), true) },
+        { std::chrono::milliseconds(3000), MidiMessage(Note(60, 1.0f), false) },
+        { std::chrono::milliseconds(5000), MidiMessage(Note(64, 1.0f), true) },
+        { std::chrono::milliseconds(7000), MidiMessage(Note(64, 1.0f), false) },
+        { std::chrono::milliseconds(9000), MidiMessage(Note(67, 1.0f), true) },
+        { std::chrono::milliseconds(11000), MidiMessage(Note(67, 1.0f), false) }
+    };
+
+    TestMidiHandler testMidi(schedule);
+    recorder.start();
+
+    while (recorder.getElapsedTime() < std::chrono::seconds(12)) {
+        testMidi.update();
+        if (testMidi.hasMessages()) {
+            MidiMessage msg = testMidi.popMessage();
+            std::cout << "Test MIDI message: Note " << msg.getNote().getMidiNote() 
+                      << (msg.isOn() ? " ON" : " OFF") << std::endl;
+            recorder.process(msg);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    recordings[1] = recorder.stop();
 
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -273,6 +299,7 @@ int main(int, char**) {
                     if (recordings[3].getEvents().size() > 0) midiPlayerBass.play(recordings[3],false, timestamp_position);
                     isMoving = true;
                 } else {
+                    audioHandler.removeAllNotes();
                     midiPlayerPiano.stop();
                     midiPlayerGuitar.stop();
                     midiPlayerDrums.stop();
@@ -299,8 +326,21 @@ int main(int, char**) {
                 //recordToggle(recorder, recordings[sequencer.currentTrack-1],timestamp_position, individualUI, sequencer, isMoving);
                 if (isMoving) {
                     recordings[sequencer.currentTrack-1] = recorder.stop();
+                    Midi_Recording_Utils::fillGaps(recordings[sequencer.currentTrack-1]);
+                    audioHandler.removeAllNotes();
+                    midiPlayerPiano.stop();
+                    midiPlayerGuitar.stop();
+                    midiPlayerDrums.stop();
+                    midiPlayerBass.stop();
                     isMoving = false;
                 } else {
+                    if (sequencer.currentTrack != 1) midiPlayerPiano.play(recordings[0],false, 0.0);
+                    if (sequencer.currentTrack != 2) midiPlayerGuitar.play(recordings[1],false, 0.0);
+                    if (sequencer.currentTrack != 3) midiPlayerDrums.play(recordings[2],false, 0.0);
+                    if (sequencer.currentTrack != 4) midiPlayerBass.play(recordings[3],false, 0.0);
+                    
+                    recordings[sequencer.currentTrack-1] = MidiRecording();
+
                     individualUI.setCursor(60.0f);
                     recorder.start();
                     isMoving = true;
