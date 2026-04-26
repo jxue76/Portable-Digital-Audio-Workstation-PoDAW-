@@ -117,7 +117,7 @@ int main(int, char**) {
         { std::chrono::milliseconds(11000), MidiMessage(Note(57, 1.0f), false) }
     };
 
-    testMidi(schedule);
+    testMidi = TestMidiHandler(schedule);
     recorder.start();
 
     while (recorder.getElapsedTime() < std::chrono::seconds(12)) {
