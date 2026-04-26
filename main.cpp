@@ -80,7 +80,7 @@ int main(int, char**) {
     recordings[2].setInstrument(drums);
     recordings[3].setInstrument(bass);
 
-    recorder.setInstrument(piano);
+    /*recorder.setInstrument(piano);
 
     std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
         { std::chrono::milliseconds(1000), MidiMessage(Note(60, 1.0f), true) },
@@ -130,7 +130,7 @@ int main(int, char**) {
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    recordings[1] = recorder.stop();
+    recordings[1] = recorder.stop();*/
 
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -299,11 +299,11 @@ int main(int, char**) {
                     if (recordings[3].getEvents().size() > 0) midiPlayerBass.play(recordings[3],false, timestamp_position);
                     isMoving = true;
                 } else {
-                    audioHandler.removeAllNotes();
                     midiPlayerPiano.stop();
                     midiPlayerGuitar.stop();
                     midiPlayerDrums.stop();
                     midiPlayerBass.stop();
+                    audioHandler.removeAllNotes();
                     isMoving = false;
                 }
             } else {
