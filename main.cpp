@@ -187,7 +187,7 @@ int main(int, char**) {
     auto current_input_delay = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - input_delay);
     bool input_lock = false;
 
-    TestMidiHandler midiHandler;
+    MidiHandler midiHandler;
 
     //std::cout << "start of render" <<std::endl;
     bool input = false;
