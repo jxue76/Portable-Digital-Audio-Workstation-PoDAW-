@@ -63,8 +63,11 @@ namespace MidiUtils {
         }
         for (int i = 0; i < 255; ++i) {
             if (notegaps[i] == NoteGap::MissingNoteOff) {
+                std::cout << "Filled note off at note: " << i << std::endl;
                 events.emplace_back(MidiMessage(Note(i, 1.0f), false), recording.getLength());
             } else if (notegaps[i] == NoteGap::MissingNoteOn) {
+                std::cout << "Filled note on at note: " << i << std::endl;
+
                 events.emplace_back(MidiMessage(Note(i, 1.0f), true), std::chrono::microseconds(0));
             }
         }
