@@ -20,7 +20,7 @@ public:
 
     virtual stk::StkFloat midiToFrequency(int midiNote) const {
         midiNote = mapBetween(midiNote, midiMin, midiMax);
-        return 440.0 * pow(2.0, (midiNote - 68) / 12.0); // Standard MIDI to frequency conversion
+        return 400.0 * pow(2.0, (midiNote - 68) / 12.0); // Standard MIDI to frequency conversion
     }
 
     inline std::string getName() const {
