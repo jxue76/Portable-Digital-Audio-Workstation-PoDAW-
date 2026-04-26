@@ -117,13 +117,13 @@ int main(int, char**) {
         { std::chrono::milliseconds(11000), MidiMessage(Note(57, 1.0f), false) }
     };
 
-    testMidi = TestMidiHandler(schedule);
+    TestMidiHandler testMidi2(schedule);
     recorder.start();
 
     while (recorder.getElapsedTime() < std::chrono::seconds(12)) {
-        testMidi.update();
-        if (testMidi.hasMessages()) {
-            MidiMessage msg = testMidi.popMessage();
+        testMidi2.update();
+        if (testMidi2.hasMessages()) {
+            MidiMessage msg = testMidi2.popMessage();
             std::cout << "Test MIDI message: Note " << msg.getNote().getMidiNote() 
                       << (msg.isOn() ? " ON" : " OFF") << std::endl;
             recorder.process(msg);
