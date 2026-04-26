@@ -417,7 +417,7 @@ int main(int, char**) {
                 individualUI.isMoving = false;
             }
             individualUI.render(sequencer, inputs, io.DeltaTime,
-                                            recordings[sequencer.currentTrack-1],
+                                            recordings,
                                             cursorPosition);
         }
 
