@@ -109,12 +109,12 @@ int main(int, char**) {
     recorder.setInstrument(guitar);
 
     std::vector<TestMidiHandler::ScheduledMidiMessage> schedule = {
-        { std::chrono::milliseconds(1000), MidiMessage(Note(60, 1.0f), true) },
-        { std::chrono::milliseconds(3000), MidiMessage(Note(60, 1.0f), false) },
-        { std::chrono::milliseconds(5000), MidiMessage(Note(64, 1.0f), true) },
-        { std::chrono::milliseconds(7000), MidiMessage(Note(64, 1.0f), false) },
-        { std::chrono::milliseconds(9000), MidiMessage(Note(67, 1.0f), true) },
-        { std::chrono::milliseconds(11000), MidiMessage(Note(67, 1.0f), false) }
+        { std::chrono::milliseconds(1000), MidiMessage(Note(50, 1.0f), true) },
+        { std::chrono::milliseconds(3000), MidiMessage(Note(50, 1.0f), false) },
+        { std::chrono::milliseconds(5000), MidiMessage(Note(54, 1.0f), true) },
+        { std::chrono::milliseconds(7000), MidiMessage(Note(54, 1.0f), false) },
+        { std::chrono::milliseconds(9000), MidiMessage(Note(57, 1.0f), true) },
+        { std::chrono::milliseconds(11000), MidiMessage(Note(57, 1.0f), false) }
     };
 
     TestMidiHandler testMidi(schedule);
