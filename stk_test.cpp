@@ -31,7 +31,7 @@ void test0(AudioHandler& audioHandler) {
     Note hihat(42, 1.0f); // Hi-hat
 
     int iterations = 0;
-    while (iterations < 5) { 
+    while (iterations < 3) { 
         std::cout << "Iteration " << iterations + 1 << std::endl;
         audioHandler.addNoteToInstrument(piano, c4);
         audioHandler.printActiveNotes();

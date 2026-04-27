@@ -49,7 +49,7 @@ public:
 protected:
     int midiMin;
     int midiMax;
-
+    StkFloat tuningOffset = 1.5f;
 private:
     std::string name;
     float volume;

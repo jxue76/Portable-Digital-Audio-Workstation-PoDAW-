@@ -1,23 +1,20 @@
 #include "Drums.hpp"
 #include "Drummer.h"
+#include <cmath>
 
 Drums::Drums()
     : Instrument("Drums", []() { return std::make_unique<stk::Drummer>(); }, 36, 81, 1.0f) {
+    tuningOffset = 0.0f; // Drums don't need a tuning offset since they are not pitched instruments, but we can set it to 0 for clarity
 }
 Drums::Drums(std::string name)
     : Instrument(std::move(name), []() { return std::make_unique<stk::Drummer>(); }, 36, 81, 1.0f) {
+    tuningOffset = 0.0f; // Drums don't need a tuning offset since they are not pitched instruments, but we can set it to 0 for clarity
 }
 void Drums::noteOn(const Note& note) {
-    float offset = 1.5f; // Adjust the MIDI note number to better match the drum sounds
-    Note noteWithOffset(note.getMidiNote() + offset, note.getAmplitude());
-    printf("Drums noteOn: MIDI Note %d, Amplitude %.2f\n", noteWithOffset.getMidiNote(), noteWithOffset.getAmplitude());
-    Instrument::noteOn(noteWithOffset);
+    Instrument::noteOn(note);
 }
 void Drums::noteOff(const Note& note) {
-    float offset = 1.5f; // Adjust the MIDI note number to better match the drum sounds
-    Note noteWithOffset(note.getMidiNote() + offset, note.getAmplitude());
-    printf("Drums noteOff: MIDI Note %d, Amplitude %.2f\n", noteWithOffset.getMidiNote(), noteWithOffset.getAmplitude());
-    Instrument::noteOff(noteWithOffset);
+    Instrument::noteOff(note);
 }
 stk::StkFloat Drums::midiToFrequency(int midiNote) const {
     midiNote = mapBetween(midiNote, midiMin, midiMax);
