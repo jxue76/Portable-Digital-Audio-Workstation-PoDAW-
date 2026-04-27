@@ -9,11 +9,15 @@ Drums::Drums(std::string name)
 }
 void Drums::noteOn(const Note& note) {
     float offset = 1.5f; // Adjust the MIDI note number to better match the drum sounds
-    Instrument::noteOn(Note(note.getMidiNote() + offset, note.getAmplitude()));
+    Note noteWithOffset(note.getMidiNote() + offset, note.getAmplitude());
+    printf("Drums noteOn: MIDI Note %d, Amplitude %.2f\n", noteWithOffset.getMidiNote(), noteWithOffset.getAmplitude());
+    Instrument::noteOn(noteWithOffset);
 }
 void Drums::noteOff(const Note& note) {
     float offset = 1.5f; // Adjust the MIDI note number to better match the drum sounds
-    Instrument::noteOff(Note(note.getMidiNote() + offset, note.getAmplitude()));
+    Note noteWithOffset(note.getMidiNote() + offset, note.getAmplitude());
+    printf("Drums noteOff: MIDI Note %d, Amplitude %.2f\n", noteWithOffset.getMidiNote(), noteWithOffset.getAmplitude());
+    Instrument::noteOff(noteWithOffset);
 }
 stk::StkFloat Drums::midiToFrequency(int midiNote) const {
     midiNote = mapBetween(midiNote, midiMin, midiMax);
