@@ -3,24 +3,20 @@ project(PoDAW)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include(FetchContent)
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.3.8
-)
 set(GLFW_BUILD_DOCS     OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(glfw)
 
 # Use X11 on Linux
-find_package(OpenGL REQUIRED)
+find_package(OpenGL REQUIRED COMPONENTS EGL GLX GLES2)
 find_package(X11 REQUIRED)
 set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
+set(GLFW_USE_EGL ON CACHE BOOL "" FORCE)
+set(GLFW_USE_GLESV2 ON CACHE BOOL "" FORCE)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GPIOD REQUIRED libgpiodcxx)
+set(GLFW_USE_X11 ON CACHE BOOL "" FORCE)
 
-
-# 2. Define ImGui Sources
 set(IMGUI_SOURCES
     imgui/imgui.cpp
     imgui/imgui_demo.cpp
@@ -33,6 +29,7 @@ set(IMGUI_SOURCES
 
 # Added stk subdirectory (already configured with a CMakeLists.txt) and audio surce code
 add_subdirectory(stk)
+add_subdirectory(glfw)
 
 set(AUDIO_CODE_SOURCES
     Instrument.cpp
@@ -55,63 +52,81 @@ set(STK_INCLUDE_DIRS
     stk/rawwaves
 )
 
-# 3. Create Executables
-add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES})
-
-add_executable(STK_Test stk_test.cpp ${AUDIO_CODE_SOURCES})
-
-add_executable(Audio_Live_Test audio_pipeline_test.cpp ${MIDI_CODE_SOURCES})
-
-add_executable(Audio_Recording_Test recording_test.cpp ${MIDI_CODE_SOURCES})
-
-# 4. Include Directories
-target_include_directories(PoDAW_Test PRIVATE 
 set(PODAW_SOURCES
     main.cpp
     Inputs.cpp
     Sequencer.cpp
     SettingsUI.cpp
     SequencerUI.cpp
+    IndividualTrack.cpp
+    GpioInputs.cpp
+    KeyboardInputs.cpp
 )
 
-# Platform-specific input backend
-if(PODAW_USE_GPIO)
-    list(APPEND PODAW_SOURCES GpioInputs.cpp)
-else()
-    list(APPEND PODAW_SOURCES KeyboardInputs.cpp)
+# Detect Raspberry Pi Zero 2 W and define IMGUI_IMPL_OPENGL_ES2
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm" OR CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+    # Check for Raspberry Pi specific indicators
+    if(EXISTS "/proc/device-tree/model")
+        file(READ "/proc/device-tree/model" RASPBERRY_PI_MODEL)
+        if(RASPBERRY_PI_MODEL MATCHES "Raspberry Pi Zero 2")
+            add_definitions(-DIMGUI_IMPL_OPENGL_ES2)
+            message(STATUS "Detected Raspberry Pi Zero 2 W - enabling OpenGL ES 2.0 support")
+        endif()
+    elseif(CMAKE_CROSSCOMPILING)
+        # When cross-compiling for ARM, assume Raspberry Pi Zero 2 W if not specified otherwise
+        add_definitions(-DIMGUI_IMPL_OPENGL_ES2)
+        message(STATUS "Cross-compiling for ARM - enabling OpenGL ES 2.0 support for Raspberry Pi Zero 2 W")
+    endif()
 endif()
 
-add_executable(PoDAW_Test ${PODAW_SOURCES} ${IMGUI_SOURCES})
+# 3. Create Executables
+add_executable(PoDAW_Test main.cpp ${IMGUI_SOURCES} ${PODAW_SOURCES} ${MIDI_CODE_SOURCES})
+
+add_executable(STK_Test stk_test.cpp ${AUDIO_CODE_SOURCES})
+
+#add_executable(Audio_Live_Test audio_pipeline_test.cpp ${MIDI_CODE_SOURCES})
+
+#add_executable(Audio_Recording_Test recording_test.cpp ${MIDI_CODE_SOURCES})
+
+#add_executable(PoDAW_Test ${PODAW_SOURCES} ${IMGUI_SOURCES})
 
 target_include_directories(PoDAW_Test PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
+    ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include/GLFW
     ${X11_INCLUDE_DIR}
+    ${STK_INCLUDE_DIRS}
+    #${AUDIO_CODE_SOURCES}
+    #${MIDI_CODE_SOURCES}
 )
 
 target_include_directories(STK_Test PRIVATE ${STK_INCLUDE_DIRS})
 
-target_include_directories(Audio_Live_Test PRIVATE ${STK_INCLUDE_DIRS})
+#target_include_directories(Audio_Live_Test PRIVATE ${STK_INCLUDE_DIRS})
 
-target_include_directories(Audio_Recording_Test PRIVATE ${STK_INCLUDE_DIRS})
+#target_include_directories(Audio_Recording_Test PRIVATE ${STK_INCLUDE_DIRS})
 
 # 5. Link Libraries (glfw now comes from the auto-download)
-target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL ${X11_LIBRARIES})
+target_include_directories(PoDAW_Test PRIVATE ${GPIOD_INCLUDE_DIRS})
+target_link_libraries(PoDAW_Test PRIVATE ${GPIOD_LIBRARIES})
+
+
+target_link_libraries(PoDAW_Test PRIVATE glfw OpenGL::GL OpenGL::EGL OpenGL::GLX OpenGL::GLES2 ${X11_LIBRARIES})
+target_link_libraries(PoDAW_Test PRIVATE stk)
 
 target_link_libraries(STK_Test PRIVATE stk)
 
-target_link_libraries(Audio_Live_Test PRIVATE stk)
+#target_link_libraries(Audio_Live_Test PRIVATE stk)
 
-target_link_libraries(Audio_Recording_Test PRIVATE stk)
-target_link_libraries(PoDAW_Test PRIVATE glfw)
+#target_link_libraries(Audio_Recording_Test PRIVATE stk)
 
-if(WIN32)
-    target_link_libraries(PoDAW_Test PRIVATE opengl32 gdi32)
-elseif(UNIX)
-    find_package(OpenGL REQUIRED)
-    target_link_libraries(PoDAW_Test PRIVATE OpenGL::GL)
-    if(PODAW_USE_GPIO)
-        target_link_libraries(PoDAW_Test PRIVATE gpiodcxx)
-    endif()
-endif()
+#if(WIN32)
+#    target_link_libraries(PoDAW_Test PRIVATE opengl32 gdi32)
+#elseif(UNIX)
+#    find_package(OpenGL REQUIRED)
+#    target_link_libraries(PoDAW_Test PRIVATE OpenGL::GL)
+#    if(PODAW_USE_GPIO)
+#        target_link_libraries(PoDAW_Test PRIVATE gpiodcxx)
+#    endif()
+#endif()

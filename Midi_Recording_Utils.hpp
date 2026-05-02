@@ -1,3 +1,4 @@
+#pragma once
 #include "MidiRecording.hpp"
 #include "MidiMessage.hpp"
 #include "Instrument.hpp"
@@ -35,18 +36,13 @@ namespace MidiUtils {
 
     // In-place filling of gaps with missing note-on and note-off events filled in to ensure all notes are properly terminated
     void fillGaps(MidiRecording& recording) {
+        std::cout << "Start filling gaps" << std::endl;
         sortRecording(recording);
         NoteGap notegaps[255] = {NoteGap::None};
         std::vector<TimedMidiMessage>& events = recording.getEvents();
         for (const auto& event : events) {
             int midiNote = event.getNote().getMidiNote();
-            if (notegaps[midiNote] == NoteGap::None) {
-                if (event.isOn()) {
-                    notegaps[midiNote] = NoteGap::MissingNoteOff;
-                } else {
-                    notegaps[midiNote] = NoteGap::MissingNoteOn;
-                }
-            } else if (notegaps[midiNote] == NoteGap::MissingNoteOff) {
+            if (notegaps[midiNote] == NoteGap::MissingNoteOff) {
                 if (event.isOn()) {
                     notegaps[midiNote] = NoteGap::MissingNoteOff;
                 } else {
@@ -58,17 +54,28 @@ namespace MidiUtils {
                 } else {
                     notegaps[midiNote] = NoteGap::MissingNoteOn;
                 }
+            } else {
+                if (event.isOn()) {
+                    notegaps[midiNote] = NoteGap::MissingNoteOff;
+                } else {
+                    notegaps[midiNote] = NoteGap::MissingNoteOn;
+                }
             }
+            std::cout << "Note: " << midiNote << std::endl;
+            std::cout << "Event is: " << (notegaps[midiNote] == NoteGap::MissingNoteOff) << std::endl;
         }
         for (int i = 0; i < 255; ++i) {
             if (notegaps[i] == NoteGap::MissingNoteOff) {
+                std::cout << "Filled note off at note: " << i << std::endl;
                 events.emplace_back(MidiMessage(Note(i, 1.0f), false), recording.getLength());
             } else if (notegaps[i] == NoteGap::MissingNoteOn) {
+                std::cout << "Filled note on at note: " << i << std::endl;
+
                 events.emplace_back(MidiMessage(Note(i, 1.0f), true), std::chrono::microseconds(0));
             }
         }
         sortRecording(recording);
-        return recording;
+        //return recording;
     }
     
     // In-place concatenation of two recordings, appending the source recording to the end of the destination recording, and modifying the timestamps of the source events to be relative to the end of the destination recording
@@ -89,7 +96,7 @@ namespace MidiUtils {
         for (const auto& event : sourceEvents) {
             if (event.getTimestamp() >= startTime && event.getTimestamp() <= endTime) {
                 destination.getEvents().emplace_back(event, event.getTimestamp() - startTime);
-            
+            }
         }
         destination.setLength(endTime - startTime);
         return destination;

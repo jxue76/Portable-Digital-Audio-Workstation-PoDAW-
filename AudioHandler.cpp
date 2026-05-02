@@ -79,3 +79,13 @@ void AudioHandler::printActiveNotes() const {
     }
     std::cout << "-----------------------------" << std::endl;
 }
+
+void AudioHandler::removeAllNotes() {
+    for (auto &instrument_notes : activeNotes) {
+        for (auto &note : instrument_notes.second) {
+            instrument_notes.first->noteOff(note);
+            //removeNoteFromInstrument(instrument_notes.first, note);
+        }
+        instrument_notes.second.clear();
+    }
+}

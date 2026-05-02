@@ -20,7 +20,7 @@ public:
 
     virtual stk::StkFloat midiToFrequency(int midiNote) const {
         midiNote = mapBetween(midiNote, midiMin, midiMax);
-        return 440.0 * pow(2.0, (midiNote - 69) / 12.0); // Standard MIDI to frequency conversion
+        return 440.0 * pow(2.0, (midiNote - 68) / 12.0); // Standard MIDI to frequency conversion
     }
 
     inline std::string getName() const {
@@ -35,8 +35,8 @@ public:
         volume = newVolume;
     }
 
-    void noteOn(const Note& note);
-    void noteOff(const Note& note);
+    virtual void noteOn(const Note& note);
+    virtual void noteOff(const Note& note);
     stk::StkFloat tick();
 
     static int mapBetween(int x, int a, int b) {
@@ -49,7 +49,7 @@ public:
 protected:
     int midiMin;
     int midiMax;
-
+    stk::StkFloat tuningOffset = 1.5f;
 private:
     std::string name;
     float volume;

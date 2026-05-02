@@ -14,6 +14,8 @@ public:
     
     std::chrono::microseconds getTimestamp() const { return timestamp; }
 
+    void setTimestamp(std::chrono::microseconds newTimestamp) { timestamp = newTimestamp; }
+
 private:
     std::chrono::microseconds timestamp;
 };

@@ -20,6 +20,8 @@ public:
     bool addNoteToInstrument(std::shared_ptr<Instrument> instrument, Note note);
     bool removeNoteFromInstrument(std::shared_ptr<Instrument> instrument, Note note);
 
+    void removeAllNotes();
+
     inline ActiveNotesMap readActiveNotes() const { // Pass by value to restrict modification of internal state
         std::lock_guard<std::mutex> lock(mtx);
         return activeNotes;

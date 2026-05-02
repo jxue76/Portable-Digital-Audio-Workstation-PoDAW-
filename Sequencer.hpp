@@ -48,6 +48,10 @@ public:
     void recordMidiEvent(const MidiInputEvent& event);
 
     Mode getMode() const { return mode; }
+    bool isStopped() const {
+        if (mode == Mode::STOPPED) return true;
+        else return false;
+    }
     int getCurrentStep() const { return currentStep; }
     int getArmedTrack() const { return armedTrack; }
     bool hasLiveInputNote() const { return liveInputActive; }
@@ -62,9 +66,11 @@ public:
     uint8_t inputVelocity = 100;
 
     Track tracks[NUM_TRACKS];
+    int currentTrack = 1;
+    int currentMode = 0;
 
     static const char* noteToName(uint8_t note);
-
+    
 private:
     Mode mode = Mode::STOPPED;
     int currentStep = 0;

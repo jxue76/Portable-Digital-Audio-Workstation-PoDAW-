@@ -14,6 +14,8 @@ public:
     MidiMessage popMessage(); // Pops the next MIDI message from the queue, returns an empty message if none are available
     bool hasMessages() const; // Checks if there are MIDI messages in the queue
     void pushMessage(const MidiMessage& msg);
+
+    
 protected:
     std::vector<MidiMessage> midiMessages;
 private:

@@ -4,3 +4,6 @@
 [submodule "stk"]
 	path = stk
 	url = https://github.com/thestk/stk.git
+[submodule "glfw"]
+	path = glfw
+	url = https://github.com/glfw/glfw.git
